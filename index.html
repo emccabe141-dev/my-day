@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>My day</title>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap">
+<style>
+/* The boys' screen: bright, bouncy and theirs. Each boy picks a theme; every tick earns a star and a little celebration.
+   Casa Mallow itself stays calm and muted: this look is only for the tablets. */
+body{--bg1:#1b1448;--bg2:#4a1f8f;--accent:#ffb020;--on-accent:#2a1600;--glow:rgba(255,176,32,.55)}
+body.t-space{--bg1:#1b1448;--bg2:#4a1f8f;--accent:#ffb020;--on-accent:#2a1600;--glow:rgba(255,176,32,.55)}
+body.t-bear{--bg1:#2a5bb8;--bg2:#173a7a;--accent:#ffa62b;--on-accent:#3a1d00;--glow:rgba(255,166,43,.55)}
+body.t-ball{--bg1:#e8590c;--bg2:#7c2d12;--accent:#ffd43b;--on-accent:#3a2a00;--glow:rgba(255,212,59,.55)}
+body.t-alien{--bg1:#14532d;--bg2:#4c1d95;--accent:#a3ff3c;--on-accent:#12300a;--glow:rgba(163,255,60,.5)}
+body.t-ocean{--bg1:#0892b8;--bg2:#0a4f96;--accent:#ffd23f;--on-accent:#2a2000;--glow:rgba(255,210,63,.55)}
+body.t-jungle{--bg1:#1f9d5a;--bg2:#0b6b4a;--accent:#ffd23f;--on-accent:#2a2000;--glow:rgba(255,210,63,.55)}
+body.t-lava{--bg1:#f2622e;--bg2:#c81e3a;--accent:#ffe45e;--on-accent:#3a2500;--glow:rgba(255,228,94,.6)}
+body.t-candy{--bg1:#f062ad;--bg2:#7a4cf0;--accent:#fff06a;--on-accent:#3a3000;--glow:rgba(255,240,106,.6)}
+*{box-sizing:border-box}
+html{min-height:100%}
+body{margin:0;min-height:100vh;color:#231942;font:20px/1.35 "Fredoka","Trebuchet MS",Verdana,Arial,sans-serif;background:linear-gradient(160deg,var(--bg1),var(--bg2)) fixed;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:4px solid #fff;outline-offset:3px}
+.deco{position:fixed;left:0;top:0;right:0;bottom:0;pointer-events:none;overflow:hidden;z-index:0}
+.deco span{position:absolute;font-size:44px;opacity:.28;animation:drift 9s ease-in-out infinite alternate}
+.wrap{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:18px 16px 60px;display:grid;gap:16px}
+.top{display:flex;align-items:center;gap:12px;color:#fff}
+.mascot{font-size:54px;line-height:1;animation:bob 2.4s ease-in-out infinite}
+.hi{flex:1;min-width:0}
+.hi b{display:block;font:700 34px/1.05 "Fredoka",sans-serif;text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.hi small{font-size:19px;opacity:.92}
+.round{flex:none;width:56px;height:56px;border-radius:50%;border:0;background:rgba(255,255,255,.22);font-size:28px;line-height:1;display:grid;place-items:center}
+.themes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;background:rgba(255,255,255,.2);border-radius:26px;padding:12px}
+.themes button{border:4px solid transparent;border-radius:22px;min-width:92px;padding:10px 8px;font:600 17px/1.1 "Fredoka",sans-serif;color:#fff;display:grid;justify-items:center;gap:4px}
+.themes button span{font-size:34px}
+.themes button[aria-pressed="true"]{border-color:#fff}
+.seg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+.seg button{font-size:clamp(14px,3.7vw,20px)!important;padding:12px 4px!important}
+.special{display:flex;align-items:center;gap:14px;padding:14px 18px;border:5px solid #ffd43b;background:#fff9db}
+.special .sp{font-size:46px;line-height:1;animation:bob 2s ease-in-out infinite}
+.special small{display:block;font:700 17px/1.1 "Fredoka",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8a5a00}
+.special b{display:block;font:700 25px/1.2 "Fredoka",sans-serif;overflow-wrap:anywhere}
+.wsp{background:#fff9db;padding:8px 16px;display:grid;gap:2px;border-bottom:3px solid #ffd43b}
+.wsp b{font:700 21px/1.2 "Fredoka",sans-serif}
+.upd{display:block;text-align:center;text-decoration:none;background:#fff;color:#231942;border-radius:999px;padding:16px 20px;font:700 24px/1.1 "Fredoka",sans-serif;box-shadow:0 6px 0 rgba(0,0,0,.2);animation:pulse 1.8s ease-in-out infinite}
+.wk{padding:12px 18px 14px;display:grid;gap:8px}
+.wkey{display:flex;align-items:center;gap:14px}
+.wkey span{font-size:38px;line-height:1;flex:none}
+.wkey b{font:700 27px/1.15 "Fredoka",sans-serif;overflow-wrap:anywhere}
+.dayline{background:rgba(255,255,255,.2);border-radius:24px;padding:12px 16px;color:#fff;display:grid;gap:2px}
+.dl-marks{position:relative;height:36px;margin:0 22px}
+.dl-marks span{position:absolute;top:0;transform:translateX(-50%);font-size:28px;line-height:1}
+.dl-marks span.past{opacity:.5;filter:grayscale(.7)}
+.dl-track{position:relative;height:24px;margin:12px 22px 14px;border-radius:999px;background:linear-gradient(90deg,#ffd76a 0%,#8fd0ff 22%,#6db8ff 55%,#ffa25c 78%,#3a2f8f 92%,#1b1448 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.55)}
+.dl-track i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:rgba(20,10,50,.45)}
+.dl-track b{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:44px;line-height:1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.3));transition:left 1s}
+.dl-ends{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:600 17px/1.2 "Fredoka",sans-serif}
+.dl-ends .dl-now{font-size:19px;text-align:center}
+.week{display:grid;gap:16px}
+.wday{background:#fff;border-radius:28px;overflow:hidden;box-shadow:0 8px 0 rgba(0,0,0,.16);border:5px solid var(--c1)}
+.wday.tod{border-color:#fff;outline:5px solid var(--c1)}
+.wh{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:baseline;gap:6px 12px;flex-wrap:wrap}
+.wh b{font:700 27px/1.1 "Fredoka",sans-serif}
+.wh small{font:600 18px/1.1 "Fredoka",sans-serif;opacity:.95}
+.wl{padding:10px 14px 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px 16px}
+.wi{display:grid;grid-template-columns:32px 66px minmax(0,1fr);align-items:center;gap:8px;padding:4px 0;font:600 19px/1.2 "Fredoka",sans-serif}
+.wi span{font-size:25px;line-height:1}
+.wi small{color:#5b5378;font-size:17px}
+.wi b{font-weight:600;overflow-wrap:anywhere}
+.wfree{margin:6px 0;font:600 20px/1.2 "Fredoka",sans-serif;color:#5b5378}
+.seg button{border:0;border-radius:999px;background:rgba(255,255,255,.2);color:#fff;padding:12px 8px;font:600 20px/1 "Fredoka",sans-serif;min-height:52px}
+.seg button[aria-pressed="true"]{background:#fff;color:#231942;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.stars{background:rgba(255,255,255,.2);border-radius:24px;padding:12px 16px;color:#fff;display:grid;gap:8px}
+.stars .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font:600 21px/1.1 "Fredoka",sans-serif}
+.stars .row b{font-size:26px}
+.starline{display:flex;flex-wrap:wrap;gap:4px;font-size:28px;line-height:1}
+.starline i{font-style:normal;opacity:.3;filter:grayscale(1)}
+.starline i.on{opacity:1;filter:none}
+.starline i.new{animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
+.bar{height:16px;border-radius:999px;background:rgba(0,0,0,.22);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--accent);transition:width .6s}
+.card{background:#fff;border-radius:34px;box-shadow:0 8px 0 rgba(0,0,0,.16)}
+.now{padding:22px 20px 24px;display:grid;justify-items:center;gap:12px;text-align:center;border:6px solid var(--accent)}
+.badge{background:var(--accent);color:var(--on-accent);font:700 18px/1 "Fredoka",sans-serif;letter-spacing:.08em;border-radius:999px;padding:8px 18px}
+.bubble{display:grid;place-items:center;border-radius:50%;background:var(--v,#3b9dff);flex:none;line-height:1}
+.now .bubble{width:150px;height:150px;font-size:86px;animation:bob 2s ease-in-out infinite;box-shadow:0 8px 0 rgba(0,0,0,.12)}
+.now .what{font:700 clamp(32px,8vw,50px)/1.05 "Fredoka",sans-serif;overflow-wrap:anywhere}
+.now .left{font:600 22px/1.2 "Fredoka",sans-serif;color:#5b5378}
+.timebar{width:100%;max-width:420px;height:18px;border-radius:999px;background:#ece8f6;overflow:hidden}
+.timebar i{display:block;height:100%;border-radius:999px;background:var(--v,#3b9dff);transition:width 1s linear}
+.donebtn{border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font:700 28px/1 "Fredoka",sans-serif;padding:20px 44px;min-height:72px;box-shadow:0 7px 0 rgba(0,0,0,.2);animation:pulse 1.8s ease-in-out infinite}
+.donebtn:active,.tick:active{transform:translateY(4px) scale(.97)}
+.free .bubble{background:#ffe9a8}
+.next{display:flex;align-items:center;gap:16px;padding:14px 18px}
+.next .bubble{width:72px;height:72px;font-size:40px}
+.next b{font:700 26px/1.15 "Fredoka",sans-serif;display:block;overflow-wrap:anywhere}
+.next small{font:600 18px/1.2 "Fredoka",sans-serif;color:#5b5378}
+.extra{padding:16px;display:grid;gap:14px}
+.jar{display:flex;align-items:center;gap:18px}
+.jarsvg{flex:none}
+.jar .jt{display:grid;gap:4px;min-width:0}
+.jar .jt b{font:700 26px/1.1 "Fredoka",sans-serif}
+.jar .jt small{font:600 21px/1.2 "Fredoka",sans-serif;color:#231942}
+.jar .jt small.dim{color:#5b5378;font-size:18px}
+.mallows{display:flex;gap:6px;flex-wrap:wrap}
+.mallows i{width:34px;height:28px;border-radius:11px;border:3px dashed #c9c2dc;background:transparent}
+.mallows i.in{border:3px solid #231942;background:#fff3e6;box-shadow:inset 0 -5px 0 #ffd9e6}
+.earn{margin:0;font:600 20px/1.2 "Fredoka",sans-serif;color:#5b5378}
+.xbtns{display:flex;gap:10px;flex-wrap:wrap}
+.xb{flex:1 1 180px;border:4px solid #d9d3ea;border-radius:22px;background:#f6f3fc;font:700 21px/1.15 "Fredoka",sans-serif;padding:12px 14px;min-height:68px;display:flex;align-items:center;gap:10px;text-align:left;color:#231942}
+.xb span{font-size:32px;line-height:1}
+.xb.on{background:#eafbe7;border-color:#7fd08a;color:#2f7d32}
+.xb:disabled{opacity:1}
+.list{display:grid;gap:12px}
+.tile{display:grid;grid-template-columns:76px minmax(0,1fr) 76px;align-items:center;gap:14px;padding:12px 10px 12px 14px;border-radius:28px;background:#fff;border:5px solid transparent;min-height:100px;box-shadow:0 6px 0 rgba(0,0,0,.14);transition:transform .25s}
+.tile .bubble{width:76px;height:76px;font-size:42px}
+.tile .t{font:700 25px/1.12 "Fredoka",sans-serif;overflow-wrap:anywhere;display:block}
+.tile .when{font:600 18px/1.2 "Fredoka",sans-serif;color:#5b5378;display:block;margin-top:3px}
+.tile.cur{border-color:var(--accent);box-shadow:0 0 0 6px var(--glow),0 6px 0 rgba(0,0,0,.14);transform:scale(1.02)}
+.tile.past{background:rgba(255,255,255,.88)}
+.tile.done{background:#eafbe7}
+.tile.done .t{color:#2f7d32}
+.tick{width:76px;height:76px;border:0;background:transparent;display:grid;place-items:center;border-radius:50%}
+.tick i{width:60px;height:60px;border-radius:50%;border:5px dashed #c9c2dc;display:grid;place-items:center;font-style:normal;font-size:38px;line-height:1}
+.tick.on i{border:0;background:#fff3c4;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.tick.fresh i{animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
+.allone{padding:24px 18px;text-align:center;display:grid;gap:8px;justify-items:center;border:6px solid var(--accent)}
+.allone span{font-size:84px;line-height:1;animation:bob 1.6s ease-in-out infinite}
+.allone b{font:700 34px/1.1 "Fredoka",sans-serif}
+.msg{color:#fff;text-align:center;padding:30px 10px;font:600 24px/1.3 "Fredoka",sans-serif}
+.note{color:#fff;font-size:17px;text-align:center;background:rgba(0,0,0,.2);border-radius:16px;padding:8px 12px;margin:0}
+.pick{display:grid;gap:18px;padding-top:24px}
+.pick button{border:0;border-radius:36px;background:#fff;min-height:170px;font:700 44px/1 "Fredoka",sans-serif;box-shadow:0 8px 0 rgba(0,0,0,.16);display:grid;place-items:center;gap:6px}
+.pick button span{font-size:64px}
+.cheer{position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:30;background:#fff;color:#231942;font:700 40px/1 "Fredoka",sans-serif;padding:18px 30px;border-radius:999px;box-shadow:0 8px 0 rgba(0,0,0,.2);pointer-events:none;white-space:nowrap;animation:cheer 1.5s ease-out forwards}
+.bits{position:fixed;left:0;top:0;width:0;height:0;z-index:29;pointer-events:none}
+.bits span{position:absolute;font-size:30px;line-height:1;animation:fly 1.25s cubic-bezier(.15,.7,.3,1) forwards}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+@keyframes drift{from{transform:translate(0,0) rotate(-8deg)}to{transform:translate(18px,-26px) rotate(10deg)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes pop{0%{transform:scale(.2) rotate(-40deg)}70%{transform:scale(1.35) rotate(12deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes cheer{0%{transform:translateX(-50%) scale(.4);opacity:0}18%{transform:translateX(-50%) scale(1.12);opacity:1}30%{transform:translateX(-50%) scale(1)}80%{opacity:1}100%{transform:translateX(-50%) translateY(-30px) scale(1);opacity:0}}
+@keyframes fly{0%{transform:translate(0,0) rotate(0) scale(.6);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--r)) scale(1.1);opacity:0}}
+@media (max-width:480px){.tile{grid-template-columns:60px minmax(0,1fr) 64px;gap:10px}.tile .bubble{width:60px;height:60px;font-size:34px}.tile .t{font-size:21px}.tick{width:64px;height:64px}.tick i{width:52px;height:52px;font-size:32px}.hi b{font-size:28px}.mascot{font-size:44px}.now .bubble{width:124px;height:124px;font-size:70px}}
+.fx{position:fixed;left:0;top:0;right:0;bottom:0;display:grid;place-items:center;z-index:28;pointer-events:none;animation:fxin 2.1s ease forwards}
+.fx-blob{position:relative;width:min(70vw,330px);height:min(70vw,330px);border-radius:50%;background:#fff;box-shadow:0 12px 0 rgba(0,0,0,.2),0 0 0 10px rgba(255,255,255,.35);display:grid;place-items:center;overflow:hidden}
+.fx-blob svg{width:78%;height:78%;overflow:visible}
+.fx-emoji{font-size:min(38vw,180px);line-height:1;display:block}
+.fx-shake{transform-origin:100px 190px;animation:fxshake .16s linear infinite}
+.fx-lines{animation:fxblink .32s steps(2) infinite}
+.fx-look{animation:fxlook .9s ease-in-out infinite}
+.fx-grin{transform-origin:110px 90px;animation:fxgrin .5s ease-in-out infinite alternate}
+.fx-spark path{transform-box:fill-box;transform-origin:center;animation:fxtwinkle .7s ease-in-out infinite alternate}
+.fx-spark path:nth-child(2){animation-delay:.2s}.fx-spark path:nth-child(3){animation-delay:.35s}.fx-spark path:nth-child(4){animation-delay:.5s}
+.fx-stomp{transform-origin:125px 170px;animation:fxstomp .5s cubic-bezier(.3,0,.6,1) infinite}
+.fx-chomp{animation:fxchomp .32s ease-in-out infinite alternate}
+.fx-spin{animation:fxspin 1s cubic-bezier(.3,.1,.3,1) 2}
+.fx-bubbles,.fx-zzz{animation:fxsway 1s ease-in-out infinite alternate}
+.fx-drive{animation:fxdrive 1.9s cubic-bezier(.4,0,.5,1) forwards}
+.fx-pop{animation:fxpop .6s cubic-bezier(.3,1.6,.5,1) 3 alternate}
+.fx-b,.fx-z{position:absolute;font-style:normal;font-size:44px;line-height:1;opacity:0;animation:fxrise 1.4s ease-out infinite}
+.fx-b.b1{left:18%;bottom:14%}.fx-b.b2{left:66%;bottom:20%;animation-delay:.35s}.fx-b.b3{left:44%;bottom:8%;animation-delay:.7s}
+.fx-z.z1{left:62%;top:34%}.fx-z.z2{left:72%;top:22%;animation-delay:.6s}
+@keyframes fxin{0%{opacity:0;transform:scale(.3)}10%{opacity:1;transform:scale(1.08)}16%{transform:scale(1)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.8)}}
+@keyframes fxshake{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes fxblink{0%{opacity:1}100%{opacity:.15}}
+@keyframes fxlook{0%,100%{transform:translate(-4px,0)}50%{transform:translate(5px,-2px)}}
+@keyframes fxgrin{from{transform:scale(.9) rotate(-3deg)}to{transform:scale(1.08) rotate(3deg)}}
+@keyframes fxtwinkle{from{transform:scale(.3) rotate(0);opacity:.3}to{transform:scale(1.3) rotate(40deg);opacity:1}}
+@keyframes fxstomp{0%,100%{transform:translateY(0) scale(1,1)}40%{transform:translateY(-34px) rotate(-8deg)}80%{transform:translateY(0) scale(1.08,.88)}}
+@keyframes fxchomp{from{transform:scale(1,1)}to{transform:scale(1.12,.84) translateY(8px)}}
+@keyframes fxspin{from{transform:rotate(0) scale(.7)}to{transform:rotate(360deg) scale(1)}}
+@keyframes fxsway{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+@keyframes fxdrive{0%{transform:translateX(-140%) scaleX(-1)}45%,60%{transform:translateX(0) scaleX(-1) rotate(4deg)}100%{transform:translateX(150%) scaleX(-1)}}
+@keyframes fxpop{from{transform:scale(.7) rotate(-10deg)}to{transform:scale(1.15) rotate(10deg)}}
+@keyframes fxrise{0%{opacity:0;transform:translateY(20px) scale(.5)}30%{opacity:1}100%{opacity:0;transform:translateY(-110px) scale(1.2)}}
+.picsvg{width:1.15em;height:1.15em;display:block;overflow:visible}
+.fx-bagflat{transform-origin:100px 180px;animation:fxbagflat 1.9s ease-in forwards}
+.fx-bagball{transform-origin:100px 110px;animation:fxbagball 1.9s ease-out forwards}
+@keyframes fxbagflat{0%{transform:scale(1,1) rotate(0);opacity:1}15%{transform:scale(1.06,.9) rotate(-4deg)}28%{transform:scale(.86,.8) rotate(6deg)}40%{transform:scale(.9,.6) rotate(-8deg)}50%{transform:scale(.7,.5) rotate(8deg);opacity:1}58%,100%{transform:scale(.6,.45) rotate(0);opacity:0}}
+@keyframes fxbagball{0%,48%{transform:scale(1.3) rotate(-20deg);opacity:0}58%{transform:scale(1.15) rotate(8deg);opacity:1}66%{transform:scale(.8) rotate(-10deg)}74%{transform:scale(.95) rotate(6deg)}82%{transform:scale(.82) rotate(-4deg)}100%{transform:scale(.9) rotate(0);opacity:1}}
+.wdbig{font-size:1.35em;letter-spacing:.01em}
+/* phones: nothing may be wider than the screen */
+.wrap{grid-template-columns:minmax(0,1fr)}
+.seg{grid-template-columns:repeat(4,minmax(0,1fr))}
+.jar .jt{min-width:0}
+.jar .jt b,.jar .jt small{overflow-wrap:anywhere}
+@media (max-width:480px){
+  .wrap{padding:12px 10px 50px;gap:12px}
+  .top{gap:8px}
+  .hi b{font-size:23px}.hi small{font-size:15px}
+  .mascot{font-size:38px}
+  .round{width:42px;height:42px;font-size:21px}
+  .seg{gap:4px}.seg button{font-size:14px!important;padding:10px 2px!important;min-height:46px;white-space:nowrap}
+  .dayline{padding:10px 10px}
+  .dl-marks{height:28px;margin:0 16px}.dl-marks span{font-size:21px}
+  .dl-track{height:20px;margin:10px 16px 12px}.dl-track b{font-size:34px}
+  .dl-ends{flex-wrap:wrap;font-size:15px}.dl-ends .dl-now{order:3;flex:1 1 100%;font-size:17px;margin-top:2px}
+  .jar{gap:10px}.jar .jarsvg{width:84px;height:104px;flex:none}
+  .jar .jt b{font-size:21px}.jar .jt small{font-size:17px}.jar .jt small.dim{font-size:15px}
+  .extra{padding:12px}.xb{font-size:18px;min-height:58px;padding:10px 12px;flex-basis:100%}.xb span{font-size:26px}
+  .wh b{font-size:22px}.wh small{font-size:15px}.wkey span{font-size:30px}.wkey b{font-size:21px}
+  .now .what{font-size:30px}.donebtn{font-size:23px;padding:16px 30px;min-height:60px}
+  .special b{font-size:20px}.special .sp{font-size:36px}
+  .upd{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.bits{display:none}}
+</style>
+</head>
+<body class="t-space">
+<div class="deco" id="deco" aria-hidden="true"></div>
+<div class="wrap" id="app"><p class="msg">Opening your day…</p></div>
+<script>
+/* stand-alone build: talks to the Apps Script data door with plain fetches (no Google sign-in involved) */
+(function(){var API='https://script.google.com/macros/s/AKfycbyi4OU_t7RELzKxvP4wUo_WyEr5cAWHr-RTtonKijvisP5vSyC0tHza59WEVkxok4vG/exec';
+function call(p){var q=Object.keys(p).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(p[k])}).join('&');
+  return fetch(API+'?'+q+'&t='+Date.now(),{credentials:'omit',redirect:'follow',cache:'no-store'}).then(function(r){return r.json()}).then(function(j){if(!j||j.error)throw new Error((j&&j.error)||'FAILED');return j.data})}
+function runner(){var ok=function(){},fail=function(){};var api={withSuccessHandler:function(f){ok=f;return api},withFailureHandler:function(f){fail=f;return api},
+  getDay:function(kid,tom){call({api:'day',kid:kid,tom:tom?1:0}).then(ok,fail)},
+  getWeek:function(kid){call({api:'week',kid:kid}).then(ok,fail)},
+  setTick:function(kid,id,on){call({api:'tick',kid:kid,id:id,on:on?1:0}).then(ok,fail)}};return api}
+window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:runner})})();
+</script><script>
+(function(){
+var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
+/* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
+var CV=21,APP_URL=location.origin+location.pathname;
+var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
+var THEMES=[
+  {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
+  {id:'ball',name:'Basketball',face:'🏀',bits:['🏀','⛹️','🏆','👟','🔥','⭐']},
+  {id:'alien',name:'Space aliens',face:'👽',bits:['👽','🛸','👾','🌟','🚀','⭐']},
+  {id:'space',name:'Space',face:'🚀',bits:['🚀','⭐','🌟','🌙','✨','👽']},
+  {id:'ocean',name:'Ocean',face:'🐙',bits:['🐠','🐙','🐳','🐚','🌊','🦀']},
+  {id:'jungle',name:'Jungle',face:'🦖',bits:['🦖','🌴','🦜','🐒','🍃','🐸']},
+  {id:'lava',name:'Dragon',face:'🐉',bits:['🐉','🔥','🌋','⚡','💥','🛡️']},
+  {id:'candy',name:'Rainbow',face:'🦄',bits:['🦄','🌈','🍭','🍬','💖','🎈']}];
+var THEME_BG={bear:'linear-gradient(160deg,#2a5bb8,#173a7a)',ball:'linear-gradient(160deg,#e8590c,#7c2d12)',alien:'linear-gradient(160deg,#14532d,#4c1d95)',space:'linear-gradient(160deg,#1b1448,#4a1f8f)',ocean:'linear-gradient(160deg,#0892b8,#0a4f96)',jungle:'linear-gradient(160deg,#1f9d5a,#0b6b4a)',lava:'linear-gradient(160deg,#f2622e,#c81e3a)',candy:'linear-gradient(160deg,#f062ad,#7a4cf0)'};
+/* pictures: the words in the title choose the picture first, then the icon Mum picked */
+var WORDS=[[/santa|father christmas/,'🎅'],[/funfair|fair\b|rides/,'🎡'],[/party|birthday/,'🎉'],[/take you to school|pick you up/,'🚗'],[/coming to stay|sleepover|to stay/,'🧳'],[/christmas/,'🎄'],[/breakfast|cereal/,'🥣'],[/lunch/,'🥪'],[/dinner|tea\b/,'🍝'],[/supper/,'🥛'],[/snack|fruit/,'🍎'],[/teeth/,'🪥'],[/bath/,'🛁'],[/shower/,'🚿'],[/pyjama|pjs/,'🌙'],[/dress|uniform|clothes/,'👕'],[/shoes|coat/,'👟'],[/wake|get up/,'⏰'],[/story|read|book/,'📖'],[/bed|sleep/,'🛏️'],[/picks you up|car|drive/,'🚗'],[/\bbus\b/,'🚌'],[/water|bottle|drink/,'🥤'],[/bag|pack/,'🎒'],[/school/,'🏫'],[/dad|andy/,'💙'],[/ipad|tablet|screen/,'📱'],[/game|switch|xbox/,'🎮'],[/tv|film|movie/,'📺'],[/lego|brick/,'🧱'],[/puzzle/,'🧩'],[/swim/,'🏊'],[/bike|scooter/,'🚲'],[/football|match/,'⚽'],[/park|outside|out and about|garden/,'🌳'],[/walk/,'👣'],[/paint|draw|craft/,'🎨'],[/music|sing/,'🎵'],[/tidy|clean/,'✨'],[/med|melatonin|pill/,'💊'],[/doctor|dentist|hospital|optician/,'🩺'],[/shop/,'🛒'],[/play/,'🧸'],[/home/,'🏠'],[/free|rest|relax|chill/,'🎈']];
+var ICONS={'alarm-clock':'⏰','sunrise':'🌅','sun':'☀️','utensils':'🍽️','coffee':'🥤','apple':'🍎','cookie':'🍪','pizza':'🍕','shirt':'👕','smile':'🪥','shower-head':'🚿','bath':'🛁','car':'🚗','bus':'🚌','backpack':'🎒','school':'🏫','book-open':'📖','home':'🏠','toy-brick':'🧱','puzzle':'🧩','trees':'🌳','footprints':'👣','bike':'🚲','gamepad-2':'🎮','tablet':'📱','tv':'📺','heart':'💙','users':'👪','cake':'🎂','party-popper':'🎉','bed':'🛏️','moon':'🌙','pill':'💊','music':'🎵','waves':'🏊','trophy':'🏆','dumbbell':'💪','paintbrush':'🎨','sofa':'🛋️','dog':'🐶','stethoscope':'🩺','shopping-cart':'🛒','sparkles':'✨','gift':'🎁','plane':'✈️','star':'⭐','tent':'⛺','ticket':'🎟️','tree-pine':'🎄','ferris-wheel':'🎡','calendar':'📅','key':'🔑'};
+var VIVID=['#ff6b6b','#ffb020','#2ecc71','#3b9dff','#9b6bff','#ff5fa2','#14b8a6','#ff8a3d'];
+var CHEERS=['Awesome!','Boom!','Nice one!','Great job!','You did it!','Superstar!','High five!','Brilliant!','Way to go!'];
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+/* the snack pack step has its own drawing: a crumpled paper bag */
+var BAG_BALL='<path d="M58 92 84 60l38-6 30 24 10 38-20 36-42 12-40-14-18-32z" fill="#c98f4e" stroke="#231942" stroke-width="7" stroke-linejoin="round"/><path d="M84 60l14 34-40-2M98 94l54-16M98 94l-6 40-48-16M92 134l50 18M92 134l70-18M122 54l-24 40" fill="none" stroke="#7a4f1d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><path d="M98 94 84 60l38-6z" fill="#e0ab6c" opacity=".7"/>';
+var BAG_PIC='<svg class="picsvg" viewBox="20 30 160 150" aria-hidden="true">'+BAG_BALL+'</svg>';
+function pic(x){var s=String(x.title||'').toLowerCase();if(/snack (pack|bag)|paper bag/.test(s))return BAG_PIC;for(var i=0;i<WORDS.length;i++)if(WORDS[i][0].test(s))return WORDS[i][1];return ICONS[x.icon]||'⭐'}
+function mins(t){if(!t)return null;var p=t.split(':');return (+p[0])*60+(+p[1])}
+function nice(t){if(!t)return'';var p=t.split(':'),h=+p[0],m=+p[1],ap=h>=12?'pm':'am';h=h%12||12;return m?h+':'+(m<10?'0':'')+m+ap:h+ap}
+function dur(n){return n>=60?Math.floor(n/60)+' hr'+(n%60?' '+n%60+' min':''):n+' min'}
+function nowMins(){try{var s=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());return mins(s)}catch(e){var d=new Date();return d.getHours()*60+d.getMinutes()}}
+var store={get:function(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+var app=document.getElementById('app');
+var state={day:null,tomorrow:false,week:false,jar:false,wk:null,note:'',pending:{},themes:false,fresh:'',cheered:''};
+if(!KID)KID=(store.get('kid')||'');
+function kidRec(){for(var i=0;i<KIDS.length;i++)if(KIDS[i].id===KID)return KIDS[i];return null}
+function themeId(){var t=store.get('theme-'+KID),k=kidRec();for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===t)return t;return k?k.theme:'space'}
+function theme(){var id=themeId();for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===id)return THEMES[i];return THEMES[0]}
+function applyTheme(){var th=theme();document.body.className='t-'+th.id;var d=document.getElementById('deco'),h='',spots=[[2,14],[93,16],[88,34],[4,42],[70,58],[12,74],[84,82],[44,92]];
+  for(var i=0;i<spots.length;i++)h+='<span style="left:'+spots[i][0]+'%;top:'+spots[i][1]+'%;animation-delay:-'+(i*1.1)+'s">'+th.bits[i%th.bits.length]+'</span>';d.innerHTML=h}
+/* every day of the week has its own colour (Sunday first), so the boys can tell the days apart at a glance; the theme still gives the character and the floating pictures */
+var DAYCOL=[['#d6336c','#8f1d49'],['#e03131','#9c1c1c'],['#e8590c','#a33b05'],['#c98a00','#8a5a00'],['#2f9e44','#1b6b2d'],['#1c7ed6','#124e94'],['#7048e8','#4527a0']];
+function dayCol(date){return DAYCOL[new Date(date+'T12:00:00Z').getUTCDay()]||DAYCOL[1]}
+function paint(date){var c=dayCol(date);document.body.style.setProperty('--bg1',c[0]);document.body.style.setProperty('--bg2',c[1])}
+function head(th,title,sub){var h='<div class="top"><span class="mascot">'+th.face+'</span><span class="hi"><b>'+title+'</b><small>'+esc(sub)+'</small></span>'
+    +'<button class="round" data-snd aria-label="'+(store.get('snd')?'Turn sounds off':'Turn sounds on')+'">'+(store.get('snd')?'🔔':'🔕')+'</button><button class="round" data-themes aria-label="Change my character">🎨</button></div>';
+  if(state.themes)h+='<div class="themes" role="group" aria-label="Pick your character">'+THEMES.map(function(t){return '<button data-theme="'+t.id+'" aria-pressed="'+(t.id===th.id)+'" style="background:'+THEME_BG[t.id]+'"><span>'+t.face+'</span>'+t.name+'</button>'}).join('')+'</div>';
+  return h+'<div class="seg" role="group" aria-label="Which day"><button data-view="today" aria-pressed="'+(!state.week&&!state.jar&&!state.tomorrow)+'">Today</button><button data-view="tom" aria-pressed="'+(!state.week&&!state.jar&&state.tomorrow)+'">Tomorrow</button><button data-view="week" aria-pressed="'+state.week+'">My week</button><button data-view="jar" aria-pressed="'+state.jar+'">My jar</button></div>'}
+function renderWeek(){var w=state.wk,th=theme();
+  if(!w){app.innerHTML=head(th,'My week','')+'<p class="msg">'+esc(state.note||'Opening your week…')+'</p>';return}
+  paint(w.today);
+  var h=head(th,esc(w.name)+'’s week','Every day has its own colour');
+  h+='<div class="week">'+w.days.map(function(dd,i){var c=dayCol(dd.date),dt=new Date(dd.date+'T12:00:00Z'),nm=dt.toLocaleDateString('en-GB',{timeZone:'UTC',weekday:'long'}),sub=dt.toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'long'});
+    return '<section class="wday'+(i===0?' tod':'')+'" style="--c1:'+c[0]+';--c2:'+c[1]+'"><div class="wh"><b>'+nm+(i===0?' · today':i===1?' · tomorrow':'')+'</b><small>'+sub+'</small></div>'+(dd.key?'<div class="wk">'+(dd.key.length?dd.key.map(function(k){return '<div class="wkey"><span>'+pic({title:k.t,icon:k.i})+'</span><b>'+esc(k.t)+'</b></div>'}).join(''):'<div class="wkey"><span>🏠</span><b>Home day</b></div>')+'</div></section>':((dd.special||[]).length?'<div class="wsp">'+dd.special.map(function(s){return '<b>🌟 '+esc(s)+'</b>'}).join('')+'</div>':'')+'<div class="wl">'
+      +(dd.items.length?dd.items.map(function(x){return '<div class="wi"><span>'+pic(x)+'</span><small>'+nice(x.start)+'</small><b>'+esc(x.title)+'</b></div>'}).join(''):'<p class="wfree">A free day! 🎈</p>')+'</div></section>')}).join('')+'</div>';
+  if(state.note)h+='<p class="note">'+esc(state.note)+'</p>';
+  app.innerHTML=h}
+function greet(){var h=nowMins()/60;return h<12?'Good morning':h<17?'Good afternoon':h<20?'Good evening':'Nearly bedtime'}
+
+function pick(){document.body.className='t-candy';app.innerHTML='<div class="pick"><p class="msg">Whose tablet is this?</p>'+KIDS.map(function(k){var th=THEMES[0];for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===k.theme)th=THEMES[i];return '<button data-pick="'+k.id+'"><span>'+th.face+'</span>'+k.name+'</button>'}).join('')+'</div>'}
+
+function shape(d){var list=d.items.map(function(x){return{id:x.id,b:x.b||('k_'+KID+'_'+x.id),title:x.title,start:x.start,end:x.end,icon:x.icon,note:x.note||''}});
+  return list.map(function(x,i){var s=mins(x.start),nx=null;for(var j=i+1;j<list.length;j++){if(mins(list[j].start)>s){nx=list[j];break}}
+    var e=x.end?mins(x.end):nx?mins(nx.start):s+60;x.s=s;x.e=Math.max(e,s+5);x.pic=pic(x);x.v=VIVID[i%VIVID.length];return x})}
+
+function render(){if(state.week){renderWeek();return}
+  var d=state.day;if(!d){app.innerHTML='<p class="msg">'+esc(state.note||'Opening your day…')+'</p>';return}
+  paint(d.date);
+  var th=theme(),items=shape(d),nm=nowMins(),today=d.isToday,isDone=function(x){return d.done.indexOf(x.b)>=0};
+  var cur=today?items.filter(function(x){return x.s<=nm&&nm<x.e&&!isDone(x)})[0]:null;
+  var nxt=today?items.filter(function(x){return x.s>nm&&!isDone(x)})[0]:null;
+  var nDone=items.filter(isDone).length,all=today&&items.length>0&&nDone===items.length;
+  var dayName=new Date(d.date+'T12:00:00Z').toLocaleDateString('en-GB',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long'});
+  /* the marshmallow jar has its own tab, so the routine screen is only the routine */
+  if(state.jar){var jh=head(th,esc(d.name)+'’s marshmallows','Do things, fill the jar, swap for treats')+(today?(extras(d,items,nm,isDone)||'<p class="msg">Your jar will be here soon.</p>'):'<p class="msg">Opening your jar…</p>');
+    if(state.note)jh+='<p class="note">'+esc(state.note)+'</p>';
+    if(d.cv&&d.cv>CV&&true)jh='<a class="upd" target="_top" href="'+esc(APP_URL)+'?kid='+esc(KID)+'&v='+d.cv+'">✨ New things are ready! Tap here ✨</a>'+jh;
+    app.innerHTML=jh;state.fresh='';return}
+  /* the top says the day of the week, big, so they always know what day it is */
+  var dObj=new Date(d.date+'T12:00:00Z'),wdName=dObj.toLocaleDateString('en-GB',{timeZone:'UTC',weekday:'long'}),dNum=dObj.toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'long'});
+  var h=head(th,'<span class="wdbig">'+esc(wdName)+'</span>',(today?'Today':'Tomorrow')+' · '+dNum);
+  if((d.special||[]).length)h+='<div class="card special"><span class="sp">🌟</span><span><small>Special '+(today?'today':'tomorrow')+'</small>'+d.special.map(function(s){return '<b>'+esc(s)+'</b>'}).join('')+'</span></div>';
+  if(today&&items.length){
+    /* how far through the day we are: a sky that goes from sunrise to night, with his character travelling along it (to help with time blindness) */
+    var t0=items[0].s,last=items[items.length-1],t1=Math.max(t0+60,last.s),pos=function(m){return Math.max(0,Math.min(100,(m-t0)/(t1-t0)*100))},p=pos(nm),seen={};
+    var marks=items.filter(function(x){if(!/breakfast|school|lunch|dinner|bed/i.test(x.title)||/to school|for school|bag/i.test(x.title))return false;var mp=/\bbed/i.test(x.title)?'🛏️':x.pic;if(seen[mp])return false;seen[mp]=1;return true}).slice(0,6).map(function(x){return{s:x.s,pic:/\bbed/i.test(x.title)?'🛏️':x.pic}});
+    var where=nm<t0?'The day hasn’t started yet':nm>=t1?'The day is finished 🌙':(nm<720?'Morning':nm<1020?'Afternoon':'Evening')+' · '+dur(t1-nm)+' until '+(/bed/i.test(last.title)?'bed':'the end of the day');
+    h+='<div class="dayline" role="img" aria-label="'+esc(where)+'"><div class="dl-marks">'+marks.map(function(m){return '<span class="'+(m.s<=nm?'past':'')+'" style="left:'+pos(m.s).toFixed(1)+'%">'+m.pic+'</span>'}).join('')+'</div>'
+      +'<div class="dl-track"><i style="width:'+p.toFixed(1)+'%"></i><b style="left:'+p.toFixed(1)+'%">'+th.face+'</b></div>'
+      +'<div class="dl-ends"><span>🌅 '+nice(items[0].start)+'</span><span class="dl-now">'+esc(where)+'</span><span>'+nice(last.start)+' 🌙</span></div></div>';
+    if(all)h+='<section class="card allone"><span>🏆</span><b>You did everything today!</b><div>'+th.bits.slice(0,5).join(' ')+'</div></section>';
+    else if(cur){var total=Math.max(1,cur.e-cur.s),leftM=Math.max(0,cur.e-nm);
+      h+='<section class="card now" style="--v:'+cur.v+'"><span class="badge">NOW</span><span class="bubble">'+cur.pic+'</span><span class="what">'+esc(cur.title)+'</span><span class="timebar"><i style="width:'+Math.round(leftM/total*100)+'%"></i></span>'+(cur.note?'<span class="left">'+esc(cur.note)+'</span>':'')+'<span class="left">'+dur(leftM)+' left</span><button class="donebtn" data-tick="'+esc(cur.b)+'" data-on="1">I did it! ⭐</button></section>'}
+    else if(nxt)h+='<section class="card now free"><span class="bubble">🎈</span><span class="what">Free time!</span></section>';
+    if(nxt&&!all)h+='<div class="card next"><span class="bubble" style="--v:'+nxt.v+'">'+nxt.pic+'</span><span><small>Next up at '+nice(nxt.start)+'</small><b>'+esc(nxt.title)+'</b></span></div>';
+  }
+  h+='<div class="list">'+(items.length?items.map(function(x){var done=isDone(x),past=today&&x.e<=nm,c=today&&x.s<=nm&&nm<x.e&&!done;
+    return '<div class="tile '+(c?'cur ':'')+(past&&!done?'past ':'')+(done?'done':'')+'"><span class="bubble" style="--v:'+x.v+'">'+x.pic+'</span><span><span class="t">'+esc(x.title)+'</span><span class="when">'+nice(x.start)+(x.end?' to '+nice(x.end):'')+'</span></span>'
+      +(today?'<button class="tick '+(done?'on ':'')+(state.fresh===x.b?'fresh':'')+'" data-tick="'+esc(x.b)+'" data-on="'+(done?'0':'1')+'" aria-label="'+(done?'Take the star back from ':'I did ')+esc(x.title)+'"><i>'+(done?'⭐':'')+'</i></button>':'<span></span>')+'</div>'}).join(''):'<p class="msg">Nothing planned. A free day! 🎈</p>')+'</div>';
+  if(state.note)h+='<p class="note">'+esc(state.note)+'</p>';
+  if(d.cv&&d.cv>CV&&true)h='<a class="upd" target="_top" href="'+esc(APP_URL)+'?kid='+esc(KID)+'&v='+d.cv+'">✨ New things are ready! Tap here ✨</a>'+h;
+  app.innerHTML=h;state.fresh='';
+  var was=state.prev;state.prev={date:d.date,all:all};
+  if(all&&was&&was.date===d.date&&!was.all){party(window.innerWidth/2,window.innerHeight/3,46);cheer('All done! 🏆');chime(true)}}
+
+/* the extra things that earn mallows: the jar, teeth and habits. They are the same ones Mum sees in Casa Mallow. */
+var HAB_PIC={ready:'👕',tidy:'🧸',bed:'🛏️'};
+/* a real glass jar that fills with marshmallows, three to a row, pink, white and lilac */
+function jarSvg(n,size){var cap=Math.min(n,20),cols=['#fff6ef','#ffc9dc','#e3d3f4'],ms='';
+  for(var i=0;i<cap;i++){var r=Math.floor(i/4),c=i%4,x=15+c*18+(r%2?1:0),y=103-r*15;
+    ms+='<g transform="rotate('+((i*37)%11-5)+' '+(x+8)+' '+(y+6)+')"><rect x="'+x+'" y="'+y+'" width="16" height="13" rx="5.5" fill="'+cols[i%3]+'" stroke="#231942" stroke-width="2.2"/><path d="M'+(x+4)+' '+(y+4)+'h5" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/></g>'}
+  return '<svg class="jarsvg" viewBox="0 0 100 124" width="118" height="146" role="img" aria-label="A jar with '+n+' marshmallows">'
+    +'<path d="M30 18v6Q12 28 12 46v58q0 16 16 16h44q16 0 16-16V46q0-18-18-22v-6" fill="#eef4ff" stroke="#231942" stroke-width="3" stroke-linejoin="round"/>'
+    +ms+'<rect x="24" y="4" width="52" height="14" rx="5" fill="#ff8fb3" stroke="#231942" stroke-width="3"/>'
+    +'<path d="M21 46v22" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".85"/></svg>'}
+/* Every one of these that gets done is a marshmallow: each teeth brushing, each habit, and all the after-school jobs together.
+   If the thing is already a step on today's routine he stars it there, so it gets no button here. Buttons are only for the things that aren't on the routine. */
+function extras(d,items,nm,isDone){var e=d.extra||{},parts=[],btns=[],earned=0;
+  (e.teeth||[]).forEach(function(s){var am=s.s==='am',own=d.done.indexOf(s.b)>=0,steps=items.filter(function(x){return /teeth/i.test(x.title)&&((x.s<720)===am)}),done=own||steps.some(isDone);
+    if(done)earned++;if(steps.length)return;
+    btns.push('<button class="xb '+(done?'on':'')+'" data-tick="'+esc(s.b)+'" data-on="'+(done?'0':'1')+'"><span>'+(done?'⭐':'🪥')+'</span>'+esc(s.l)+' teeth</button>')});
+  var treats=e.treats||[];
+  (e.hab||[]).forEach(function(hb){if(hb.id.indexOf('swap')===0)return;var re=null;try{re=hb.re?new RegExp(hb.re,'i'):null}catch(err){}
+    var own=d.done.indexOf(hb.b)>=0,steps=re?items.filter(function(x){return re.test(x.title)&&(hb.id!=='bed'||x.s>=1020)}):[],done=own||steps.some(isDone);
+    var mine=hb.id.charAt(0)==='x';
+    if(done)earned++;if(steps.length)return;if(!mine&&(hb.id==='ready'?nm>=720:nm<720))return;
+    btns.push('<button class="xb '+(done?'on':'')+'" data-tick="'+esc(hb.b)+'" data-on="'+(done?'0':'1')+'"><span>'+(done?'⭐':(HAB_PIC[hb.id]||(mine&&hb.icon?esc(hb.icon):'✨')))+'</span>'+esc(hb.l)+'</button>')});
+  var bag=items.filter(function(x){return /^bag-/.test(x.id)});if(bag.length&&bag.every(isDone))earned++;
+  if(e.jar){var size=Math.max(2,+e.jar.size||20),n=e.jar.base!==undefined?Math.max(0,Math.min(size,(+e.jar.base||0)+earned)):Math.min(size,+e.jar.n||0);
+    parts.push('<div class="jar">'+jarSvg(n,size)+'<span class="jt"><b>My marshmallow jar</b><small>'+(n>=size?n+' marshmallows. Full! Time for a big treat 🎁':n===1?'1 marshmallow so far':n+' marshmallows so far')+'</small><small class="dim">'+(n>=size?'':(size-n)+' more to fill the jar')+'</small></span></div>')}
+  if(btns.length)parts.push('<p class="earn">Do one of these for a marshmallow</p><div class="xbtns">'+btns.join('')+'</div>');
+  /* treats: he asks here, Mum says yes in Casa Mallow and the marshmallows come out of the jar */
+  if(e.jar&&treats.length)parts.push('<p class="earn">Swap marshmallows for a treat</p><div class="xbtns">'+treats.map(function(tr){var cost=Math.max(1,+tr.cost||1),asked=d.done.indexOf(tr.b)>=0,can=n>=cost,pic='<span>'+esc(tr.icon||'🎁')+'</span>';
+    if(asked)return '<button class="xb on" data-tick="'+esc(tr.b)+'" data-on="0">'+pic+'<span style="font-size:inherit;line-height:1.15">'+esc(tr.l)+'<br><small>Asked! Mum will say ✅</small></span></button>';
+    return '<button class="xb" '+(can?'data-tick="'+esc(tr.b)+'" data-on="1"':'disabled style="opacity:.6"')+'>'+pic+'<span style="font-size:inherit;line-height:1.15">'+esc(tr.l)+'<br><small>'+(can?'Swap '+cost+' marshmallow'+(cost>1?'s':''):(cost-n)+' more to go')+'</small></span></button>'}).join('')+'</div>');
+  return parts.length?'<div class="card extra">'+parts.join('')+'</div>':''}
+
+/* celebrations */
+function party(x,y,n){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;var th=theme(),box=document.createElement('div');box.className='bits';var bits=['⭐','✨','🎉'].concat(th.bits),h='';
+  for(var i=0;i<n;i++){var a=Math.random()*Math.PI*2,r=90+Math.random()*190;h+='<span style="left:'+x+'px;top:'+y+'px;--dx:'+Math.round(Math.cos(a)*r)+'px;--dy:'+Math.round(Math.sin(a)*r-70)+'px;--r:'+Math.round(Math.random()*540-270)+'deg;animation-delay:'+(Math.random()*.12).toFixed(2)+'s">'+bits[i%bits.length]+'</span>'}
+  box.innerHTML=h;document.body.appendChild(box);setTimeout(function(){if(box.parentNode)box.parentNode.removeChild(box)},1600)}
+function cheer(text){var old=document.querySelector('.cheer');if(old&&old.parentNode)old.parentNode.removeChild(old);var el=document.createElement('div');el.className='cheer';el.setAttribute('role','status');el.textContent=text||CHEERS[Math.floor(Math.random()*CHEERS.length)];document.body.appendChild(el);setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},1600)}
+/* a big silly picture when a step is ticked: each kind of step has its own little cartoon */
+var FX_SVG={
+  clock:'<svg viewBox="0 0 200 200"><g class="fx-lines" stroke="#ffb020" stroke-width="8" stroke-linecap="round"><path d="M22 44 8 30M178 44l14-14M12 96H0M188 96h12"/></g><g class="fx-shake"><circle cx="60" cy="50" r="23" fill="#ffd43b" stroke="#231942" stroke-width="6"/><circle cx="140" cy="50" r="23" fill="#ffd43b" stroke="#231942" stroke-width="6"/><rect x="93" y="22" width="14" height="20" rx="5" fill="#231942"/><path d="M62 172 48 190M138 172l14 18" stroke="#231942" stroke-width="9" stroke-linecap="round"/><circle cx="100" cy="112" r="70" fill="#ff6b6b" stroke="#231942" stroke-width="7"/><circle cx="100" cy="112" r="53" fill="#fff" stroke="#231942" stroke-width="5"/><circle cx="80" cy="100" r="13" fill="#fff" stroke="#231942" stroke-width="4"/><circle cx="120" cy="100" r="13" fill="#fff" stroke="#231942" stroke-width="4"/><g class="fx-look"><circle cx="82" cy="102" r="6" fill="#231942"/><circle cx="122" cy="102" r="6" fill="#231942"/></g><path d="M76 128q24 24 48 0z" fill="#231942"/></g></svg>',
+  mouth:'<svg viewBox="0 0 220 190"><g class="fx-grin"><path d="M12 70Q110-14 208 70 110 206 12 70z" fill="#e03131" stroke="#231942" stroke-width="7" stroke-linejoin="round"/><path d="M36 72Q110 22 184 72 110 160 36 72z" fill="#6b0f1f"/><ellipse cx="110" cy="132" rx="30" ry="14" fill="#ff8fb3"/><path d="M40 70Q110 26 180 70l-8 24Q110 78 48 94z" fill="#fff" stroke="#231942" stroke-width="4" stroke-linejoin="round"/><path d="M75 49v34M110 42v38M145 49v34" stroke="#231942" stroke-width="3"/><path d="M64 110q46 18 92 0l-8 14q-38 14-76 0z" fill="#fff" stroke="#231942" stroke-width="4" stroke-linejoin="round"/></g><g class="fx-spark" fill="#ffd43b" stroke="#231942" stroke-width="3" stroke-linejoin="round"><path d="M60 40l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/><path d="M150 30l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/><path d="M192 96l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/><path d="M26 112l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/></g></svg>',
+  shoe:'<svg viewBox="0 0 250 200"><g class="fx-stomp"><circle cx="70" cy="44" r="24" fill="#fff" stroke="#231942" stroke-width="6"/><circle cx="118" cy="44" r="24" fill="#fff" stroke="#231942" stroke-width="6"/><g class="fx-look"><circle cx="74" cy="48" r="10" fill="#231942"/><circle cx="122" cy="48" r="10" fill="#231942"/></g><path d="M22 138Q18 74 56 62h84q8 34 52 44 40 8 44 34 2 16-18 16H34q-12 0-12-18z" fill="#3b9dff" stroke="#231942" stroke-width="7" stroke-linejoin="round"/><path d="M120 66l22 26M100 66l22 30M80 66l22 34" stroke="#fff" stroke-width="6" stroke-linecap="round"/><rect x="18" y="150" width="222" height="20" rx="10" fill="#fff" stroke="#231942" stroke-width="6"/><path d="M52 112q26 26 56 6" fill="none" stroke="#231942" stroke-width="7" stroke-linecap="round"/><circle cx="196" cy="128" r="9" fill="#ff8fb3" opacity=".9"/></g><g class="fx-lines" stroke="#fff" stroke-width="7" stroke-linecap="round"><path d="M6 186h30M214 186h30M100 190h50"/></g></svg>'};
+FX_SVG.crumple='<svg viewBox="0 0 200 200"><g class="fx-bagflat"><path d="M56 44l11-12 11 12 11-12 11 12 11-12 11 12 11-12 11 12 8 136H48z" fill="#c98f4e" stroke="#231942" stroke-width="7" stroke-linejoin="round"/><path d="M78 44l-6 136M122 44l6 136" stroke="#7a4f1d" stroke-width="4"/><circle cx="88" cy="98" r="7" fill="#231942"/><circle cx="114" cy="98" r="7" fill="#231942"/><ellipse cx="101" cy="124" rx="9" ry="11" fill="#231942"/></g><g class="fx-bagball">'+BAG_BALL+'</g><g class="fx-lines" stroke="#ffb020" stroke-width="7" stroke-linecap="round"><path d="M30 70 16 58M170 70l14-12M24 130H8M176 130h16"/></g></svg>';
+function fxKind(t){t=String(t||'').toLowerCase();return /snack (pack|bag)|paper bag/.test(t)?'crumple':/wake|get up|alarm/.test(t)?'clock':/teeth|tooth/.test(t)?'mouth':/shoe|sock/.test(t)?'shoe':/breakfast|lunch|dinner|supper|snack|\btea\b|eat/.test(t)?'chomp':/dress|clothes|uniform|pyjama|pjs/.test(t)?'spin':/bath|shower|wash/.test(t)?'bubbles':/\bbed|sleep/.test(t)?'zzz':/car\b|school|leave|bus|pick|drop|take you/.test(t)?'drive':'pop'}
+function fx(id){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;var d=state.day;if(!d||/_swap/.test(id))return;
+  var it=null,ex=d.extra||{};shape(d).forEach(function(x){if(x.b===id)it={title:x.title,pic:x.pic}});
+  if(!it&&/^teeth_/.test(id))it={title:'teeth',pic:'🪥'};
+  if(!it)(ex.hab||[]).forEach(function(hb){if(hb.b===id)it={title:hb.l,pic:HAB_PIC[hb.id]||hb.icon||'⭐'}});
+  if(!it)return;var k=fxKind(it.title),inner=FX_SVG[k]||'<span class="fx-emoji fx-'+k+'">'+it.pic+'</span>'+(k==='bubbles'?'<i class="fx-b b1">🫧</i><i class="fx-b b2">🫧</i><i class="fx-b b3">🫧</i>':k==='zzz'?'<i class="fx-z z1">💤</i><i class="fx-z z2">💤</i>':'');
+  var old=document.querySelector('.fx');if(old&&old.parentNode)old.parentNode.removeChild(old);
+  var el=document.createElement('div');el.className='fx';el.setAttribute('aria-hidden','true');el.innerHTML='<div class="fx-blob fxk-'+k+'">'+inner+'</div>';document.body.appendChild(el);
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},2100)}
+var actx=null;
+function chime(big){if(!store.get('snd'))return;try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;actx=actx||new AC();var notes=big?[523,659,784,1047]:[659,988],t=actx.currentTime;
+    notes.forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t+i*.11);g.gain.exponentialRampToValueAtTime(.16,t+i*.11+.02);g.gain.exponentialRampToValueAtTime(0.0001,t+i*.11+.32);o.connect(g);g.connect(actx.destination);o.start(t+i*.11);o.stop(t+i*.11+.35)})}catch(e){}}
+
+function load(){if(!KID){pick();return}
+  if(state.week){google.script.run.withSuccessHandler(function(w){state.wk=w;state.note='';if(state.week)render()})
+    .withFailureHandler(function(){state.note=state.wk?'No internet just now. Showing what loaded last.':'Your week could not load just now. Try again in a moment.';if(state.week)render()}).getWeek(KID);return}
+  google.script.run.withSuccessHandler(function(d){
+    Object.keys(state.pending).forEach(function(id){var i=d.done.indexOf(id);if(state.pending[id]&&i<0)d.done.push(id);if(!state.pending[id]&&i>=0)d.done.splice(i,1)});
+    state.day=d;state.note='';if(d.isToday)store.set('day-'+KID,d);render()})
+  .withFailureHandler(function(err){var m=String(err&&err.message||'');
+    if(!state.day){var c=store.get('day-'+KID);if(c&&c.v===2&&!state.tomorrow){var t=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London'}).format(new Date());if(c.date===t)state.day=c}}
+    state.note=/NOT_SET_UP/.test(m)?'A grown-up needs to open Casa Mallow once to send the timetable here.':/UPDATING/.test(m)?'The timetable is being updated. Back in a moment.':'No internet just now. Showing what loaded last.';render()})
+  .getDay(KID,state.tomorrow)}
+
+function tick(id,on,x,y){var d=state.day;if(!d||!d.isToday)return;var i=d.done.indexOf(id);if(on&&i<0)d.done.push(id);if(!on&&i>=0)d.done.splice(i,1);state.pending[id]=on;
+  if(on){state.fresh=id;party(x,y,22);cheer();chime(false);fx(id)}
+  render();
+  google.script.run.withSuccessHandler(function(){delete state.pending[id];store.set('day-'+KID,state.day)})
+  .withFailureHandler(function(){delete state.pending[id];var j=d.done.indexOf(id);if(on&&j>=0)d.done.splice(j,1);if(!on&&j<0)d.done.push(id);state.note='That star did not save. Try again.';render()})
+  .setTick(KID,id,on)}
+
+document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var d=b.dataset;
+  if(d.pick){KID=d.pick;store.set('kid',KID);state.day=null;applyTheme();render();load();return}
+  if(d.themes!==undefined){state.themes=!state.themes;render();return}
+  if(d.theme){store.set('theme-'+KID,d.theme);state.themes=false;applyTheme();render();party(window.innerWidth/2,window.innerHeight/3,18);return}
+  if(d.snd!==undefined){store.set('snd',!store.get('snd'));render();chime(false);return}
+  if(d.view){var wasTom=state.tomorrow;state.week=d.view==='week';state.jar=d.view==='jar';state.tomorrow=d.view==='tom';if(!state.week&&(state.tomorrow!==wasTom||!state.day))state.day=null;state.note='';render();load();return}
+  if(d.tick){var r=b.getBoundingClientRect();tick(d.tick,d.on==='1',r.left+r.width/2,r.top+r.height/2);return}});
+setInterval(function(){if(state.day)render()},30000);
+setInterval(function(){if(!document.hidden)load()},60000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)load()});
+if(KID){applyTheme();var c=store.get('day-'+KID);if(c){var t=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London'}).format(new Date());if(c.date===t&&c.v===2){state.day=c;render()}}}
+load();
+})();
+</script>
+</body>
+</html>
