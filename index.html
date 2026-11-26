@@ -180,6 +180,32 @@ button{font:inherit;color:inherit;cursor:pointer}
 .fx-bagball{transform-origin:100px 110px;animation:fxbagball 1.9s ease-out forwards}
 @keyframes fxbagflat{0%{transform:scale(1,1) rotate(0);opacity:1}15%{transform:scale(1.06,.9) rotate(-4deg)}28%{transform:scale(.86,.8) rotate(6deg)}40%{transform:scale(.9,.6) rotate(-8deg)}50%{transform:scale(.7,.5) rotate(8deg);opacity:1}58%,100%{transform:scale(.6,.45) rotate(0);opacity:0}}
 @keyframes fxbagball{0%,48%{transform:scale(1.3) rotate(-20deg);opacity:0}58%{transform:scale(1.15) rotate(8deg);opacity:1}66%{transform:scale(.8) rotate(-10deg)}74%{transform:scale(.95) rotate(6deg)}82%{transform:scale(.82) rotate(-4deg)}100%{transform:scale(.9) rotate(0);opacity:1}}
+.lovebtn{position:fixed;right:14px;bottom:14px;z-index:20;width:70px;height:70px;border-radius:50%;border:4px solid #fff;background:#ff4d6d;font-size:36px;line-height:1;display:grid;place-items:center;box-shadow:0 6px 0 rgba(0,0,0,.25);animation:lovebeat 1.4s ease-in-out infinite}
+.love{position:fixed;left:0;top:0;right:0;bottom:0;z-index:40;border:0;padding:16px;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#3a2f8f,#140b3d 70%);color:#fff;overflow:hidden;animation:lovein .5s cubic-bezier(.3,1.4,.5,1)}
+.love-sky i{position:absolute;font-style:normal;font-size:20px;color:#ffe9a8;animation:fxtwinkle 1.1s ease-in-out infinite alternate}
+.love-in{position:relative;display:grid;justify-items:center;gap:18px;max-width:100%}
+.love-space{position:relative;display:block;width:340px;height:340px;transform:rotate(-14deg)}
+@media (max-width:420px){.love-space{transform:rotate(-14deg) scale(.8);margin:-30px}}
+@media (min-width:700px) and (min-height:700px){.love-space{transform:rotate(-14deg) scale(1.35);margin:60px}}
+.love-earth{position:absolute;left:19%;top:19%;width:62%;height:62%;z-index:2;display:block;transform:rotate(14deg);animation:earthbob 3s ease-in-out infinite}
+.love-earth svg{width:100%;height:100%;display:block}
+.orb{position:absolute;left:50%;top:50%;width:0;height:0;z-index:3;animation:orbz 2.6s steps(1) infinite}
+.orbx{position:absolute;left:0;top:0;animation:orbx 1.3s cubic-bezier(.37,0,.63,1) infinite alternate}
+.orby{position:absolute;left:0;top:0;animation:orby 1.3s cubic-bezier(.37,0,.63,1) -.65s infinite alternate}
+.love-heart{position:absolute;left:-40px;top:-36px;width:80px;height:72px;display:grid;place-items:center;font-size:62px;line-height:1;animation:orbs 2.6s ease-in-out infinite}
+.orb.h2{animation-delay:-1.3s}.orb.h2 .orbx{animation-delay:-1.3s}.orb.h2 .orby{animation-delay:-1.95s}.orb.h2 .love-heart{font-size:38px;animation-delay:-1.3s}
+.love-txt{display:grid;gap:4px;text-align:center;font-family:"Fredoka",sans-serif}
+.love-txt b{font:700 clamp(30px,8.5vw,56px)/1.05 "Fredoka",sans-serif;text-shadow:0 3px 0 rgba(0,0,0,.3);animation:lovebeat 1.4s ease-in-out infinite}
+.love-txt em{font:600 clamp(22px,6vw,38px)/1.15 "Fredoka",sans-serif;font-style:normal;color:#ffd6e0}
+/* the heart goes round in an oval: side to side on one layer, up and down on another, a quarter turn apart. First half in front of the Earth, second half behind. */
+@keyframes orbx{from{transform:translateX(165px)}to{transform:translateX(-165px)}}
+@keyframes orby{from{transform:translateY(-58px)}to{transform:translateY(58px)}}
+@keyframes orbz{0%{z-index:3}50%{z-index:1}100%{z-index:1}}
+@keyframes orbs{0%,100%{transform:scale(.95)}25%{transform:scale(1.3)}50%{transform:scale(.95)}75%{transform:scale(.6)}}
+.wrap{padding-bottom:110px!important}
+@keyframes earthbob{0%,100%{transform:rotate(14deg) translateY(0)}50%{transform:rotate(18deg) translateY(-8px)}}
+@keyframes lovebeat{0%,100%{transform:scale(1)}15%{transform:scale(1.12)}30%{transform:scale(1)}45%{transform:scale(1.08)}}
+@keyframes lovein{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
 .wdbig{font-size:1.35em;letter-spacing:.01em}
 /* phones: nothing may be wider than the screen */
 .wrap{grid-template-columns:minmax(0,1fr)}
@@ -225,7 +251,7 @@ window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:
 (function(){
 var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
 /* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
-var CV=21,APP_URL=location.origin+location.pathname;
+var CV=22,APP_URL=location.origin+location.pathname;
 var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
 var THEMES=[
   {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
@@ -378,6 +404,15 @@ function fx(id){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion
   var old=document.querySelector('.fx');if(old&&old.parentNode)old.parentNode.removeChild(old);
   var el=document.createElement('div');el.className='fx';el.setAttribute('aria-hidden','true');el.innerHTML='<div class="fx-blob fxk-'+k+'">'+inner+'</div>';document.body.appendChild(el);
   setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},2100)}
+/* the heart button: a message from Mum, with a heart flying round the world */
+var EARTH='<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="92" fill="#2d8cff" stroke="#0b2a6b" stroke-width="6"/><path d="M52 58q18-22 44-14 10 8-2 18-16 4-14 20-8 16-24 8-14-14-4-32zM118 96q22-10 40 6 8 22-8 40-20 12-30-8-10-22-2-38zM70 138q14-6 22 6 2 16-12 20-14-4-10-26z" fill="#37c871" stroke="#0b2a6b" stroke-width="4" stroke-linejoin="round"/><path d="M30 92q14-8 26 0M140 52q12-8 24 0" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".85"/><circle cx="80" cy="96" r="9" fill="#fff"/><circle cx="118" cy="92" r="9" fill="#fff"/><circle cx="82" cy="98" r="4.5" fill="#0b2a6b"/><circle cx="120" cy="94" r="4.5" fill="#0b2a6b"/><path d="M84 118q16 14 32-2" fill="none" stroke="#0b2a6b" stroke-width="5" stroke-linecap="round"/><circle cx="68" cy="112" r="7" fill="#ff8fb3" opacity=".8"/><circle cx="132" cy="108" r="7" fill="#ff8fb3" opacity=".8"/></svg>';
+function love(){var old=document.querySelector('.love');if(old&&old.parentNode){old.parentNode.removeChild(old);return}
+  var el=document.createElement('button');el.className='love';el.setAttribute('data-loveclose','');el.setAttribute('aria-label','Mummy loves you more than the whole world. Tap to close.');
+  var stars='';for(var i=0;i<16;i++)stars+='<i style="left:'+((i*61)%97)+'%;top:'+((i*37)%93)+'%;animation-delay:-'+(i*.23).toFixed(2)+'s">✦</i>';
+  el.innerHTML='<span class="love-sky">'+stars+'</span><span class="love-in"><span class="love-space"><span class="love-earth">'+EARTH+'</span><span class="orb"><span class="orbx"><span class="orby"><span class="love-heart">❤️</span></span></span></span><span class="orb h2"><span class="orbx"><span class="orby"><span class="love-heart">💖</span></span></span></span></span><span class="love-txt"><b>Mummy loves you</b><em>more than the whole world</em></span></span>';
+  document.body.appendChild(el);chime(true);
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},9000)}
+function loveBtn(){if(document.querySelector('.lovebtn'))return;var b=document.createElement('button');b.className='lovebtn';b.setAttribute('data-love','');b.setAttribute('aria-label','A message from Mummy');b.textContent='💗';document.body.appendChild(b)}
 var actx=null;
 function chime(big){if(!store.get('snd'))return;try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;actx=actx||new AC();var notes=big?[523,659,784,1047]:[659,988],t=actx.currentTime;
     notes.forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t+i*.11);g.gain.exponentialRampToValueAtTime(.16,t+i*.11+.02);g.gain.exponentialRampToValueAtTime(0.0001,t+i*.11+.32);o.connect(g);g.connect(actx.destination);o.start(t+i*.11);o.stop(t+i*.11+.35)})}catch(e){}}
@@ -401,7 +436,8 @@ function tick(id,on,x,y){var d=state.day;if(!d||!d.isToday)return;var i=d.done.i
   .setTick(KID,id,on)}
 
 document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var d=b.dataset;
-  if(d.pick){KID=d.pick;store.set('kid',KID);state.day=null;applyTheme();render();load();return}
+  if(d.love!==undefined||d.loveclose!==undefined){love();return}
+  if(d.pick){loveBtn();KID=d.pick;store.set('kid',KID);state.day=null;applyTheme();render();load();return}
   if(d.themes!==undefined){state.themes=!state.themes;render();return}
   if(d.theme){store.set('theme-'+KID,d.theme);state.themes=false;applyTheme();render();party(window.innerWidth/2,window.innerHeight/3,18);return}
   if(d.snd!==undefined){store.set('snd',!store.get('snd'));render();chime(false);return}
@@ -410,7 +446,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button');i
 setInterval(function(){if(state.day)render()},30000);
 setInterval(function(){if(!document.hidden)load()},60000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)load()});
-if(KID){applyTheme();var c=store.get('day-'+KID);if(c){var t=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London'}).format(new Date());if(c.date===t&&c.v===2){state.day=c;render()}}}
+if(KID){loveBtn();applyTheme();var c=store.get('day-'+KID);if(c){var t=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London'}).format(new Date());if(c.date===t&&c.v===2){state.day=c;render()}}}
 load();
 })();
 </script>
