@@ -240,6 +240,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .fb-t small{display:block;font:600 18px/1.2 "Fredoka",sans-serif;color:#5b5378;overflow-wrap:anywhere}
 .freebar .timebar{max-width:none;height:16px}
 @media (max-width:480px){.freebar .bubble{width:44px;height:44px;font-size:24px}.fb-t b{font-size:20px}.fb-t small{font-size:16px}}
+.cheer{font-size:clamp(24px,7.4vw,40px)!important;max-width:94vw}
 .wdbig{font-size:1.35em;letter-spacing:.01em}
 /* phones: nothing may be wider than the screen */
 .wrap{grid-template-columns:minmax(0,1fr)}
@@ -286,7 +287,7 @@ window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:
 (function(){
 var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
 /* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
-var CV=28,APP_URL=location.origin+location.pathname;
+var CV=29,APP_URL=location.origin+location.pathname;
 var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
 var THEMES=[
   {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
@@ -477,6 +478,9 @@ function love(){var old=document.querySelector('.love');if(old&&old.parentNode){
     img.onerror=function(){URL.revokeObjectURL(url)};img.src=url});
   document.body.appendChild(el);chime(true);el._t=setTimeout(shut,ph?12000:9000)}
 function loveBtn(){if(document.querySelector('.lovebtn'))return;var b=document.createElement('button');b.className='lovebtn';b.setAttribute('data-love','');b.setAttribute('aria-label','A message from Mummy');b.textContent='💗';document.body.appendChild(b)}
+/* every tick says "Good job" with his own name: on screen always, and out loud too when sounds are switched on (the bell button) */
+function goodJob(){var nm=(state.day&&state.day.name)||'',msg='Good job'+(nm?', '+nm:'')+'!';cheer(msg);
+  if(!store.get('snd'))return;try{var sy=window.speechSynthesis;if(!sy||!window.SpeechSynthesisUtterance)return;sy.cancel();var u=new SpeechSynthesisUtterance('Good job'+(nm?' '+nm:'')+'!');u.lang='en-GB';u.rate=1;u.pitch=1.2;sy.speak(u)}catch(e){}}
 var actx=null;
 function chime(big){if(!store.get('snd'))return;try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;actx=actx||new AC();var notes=big?[523,659,784,1047]:[659,988],t=actx.currentTime;
     notes.forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t+i*.11);g.gain.exponentialRampToValueAtTime(.16,t+i*.11+.02);g.gain.exponentialRampToValueAtTime(0.0001,t+i*.11+.32);o.connect(g);g.connect(actx.destination);o.start(t+i*.11);o.stop(t+i*.11+.35)})}catch(e){}}
@@ -495,7 +499,7 @@ function load(){if(!KID){pick();return}
   .getDay(KID,state.tomorrow)}
 
 function tick(id,on,x,y){var d=state.day;if(!d||!d.isToday)return;var i=d.done.indexOf(id);if(on&&i<0)d.done.push(id);if(!on&&i>=0)d.done.splice(i,1);state.pending[id]=on;
-  if(on){state.fresh=id;party(x,y,22);cheer();chime(false);fx(id)}
+  if(on){state.fresh=id;party(x,y,22);goodJob();chime(false);fx(id)}
   render();
   google.script.run.withSuccessHandler(function(){delete state.pending[id];store.set('day-'+KID,state.day)})
   .withFailureHandler(function(){delete state.pending[id];var j=d.done.indexOf(id);if(on&&j>=0)d.done.splice(j,1);if(!on&&j<0)d.done.push(id);state.note='That tick did not save. Try again.';render()})
