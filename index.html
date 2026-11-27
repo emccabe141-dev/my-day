@@ -241,6 +241,28 @@ button{font:inherit;color:inherit;cursor:pointer}
 .freebar .timebar{max-width:none;height:16px}
 @media (max-width:480px){.freebar .bubble{width:44px;height:44px;font-size:24px}.fb-t b{font-size:20px}.fb-t small{font-size:16px}}
 .cheer{font-size:clamp(24px,7.4vw,40px)!important;max-width:94vw}
+.sillybtn{position:fixed;right:14px;bottom:96px;z-index:20;width:70px;height:70px;border-radius:50%;border:4px solid #fff;background:#ffd43b;font-size:38px;line-height:1;display:grid;place-items:center;box-shadow:0 6px 0 rgba(0,0,0,.25);animation:bob 2.2s ease-in-out infinite}
+.sillybtn:active{transform:scale(.9)}
+.sil-in{display:grid;justify-items:center;gap:16px}
+.sil-word{font:700 clamp(34px,10vw,64px)/1 "Fredoka",sans-serif;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 18px rgba(0,0,0,.35);animation:fxpop .3s cubic-bezier(.3,1.6,.5,1) 4 alternate}
+.sillyfx .fx-blob{overflow:visible}
+.sil-fart{animation:silshake .1s linear infinite}
+.sil-burp{animation:silburp .28s ease-in-out infinite alternate}
+.sil-sneeze{animation:silsneeze 1.5s ease-in-out forwards}
+.sil-boing{animation:fxstomp .42s cubic-bezier(.3,0,.6,1) infinite}
+.sil-quack{animation:fxsway .22s ease-in-out infinite alternate}
+.sil-whee{animation:silwhee 1.6s ease-in forwards}
+.sil-puff,.sil-bub,.sil-drop{position:absolute;font-style:normal;line-height:1;opacity:0}
+.sil-puff{font-size:60px;left:50%;top:58%;animation:silpuff .9s ease-out infinite}
+.sil-puff.p2{animation-delay:.25s;--px:-150px}.sil-puff.p3{animation-delay:.5s;--px:150px;--py:-30px}
+.sil-bub{font-size:48px;left:54%;top:34%;animation:fxrise 1s ease-out infinite}.sil-bub.b2{left:36%;animation-delay:.4s}
+.sil-drop{font-size:54px;left:50%;top:52%;animation:sildrop 1.5s ease-out forwards}.sil-drop.d2{--px:-170px}
+@keyframes silshake{0%,100%{transform:translate(-5px,0) rotate(-4deg)}50%{transform:translate(5px,2px) rotate(4deg)}}
+@keyframes silburp{from{transform:scale(1) rotate(-5deg)}to{transform:scale(1.25) rotate(5deg)}}
+@keyframes silsneeze{0%{transform:rotate(0)}15%{transform:rotate(-16deg) translateY(-8px)}24%{transform:rotate(-6deg)}38%{transform:rotate(-22deg) translateY(-12px)}47%{transform:rotate(-10deg)}52%{transform:rotate(30deg) translateY(26px) scale(1.25)}70%{transform:rotate(-6deg)}100%{transform:rotate(0)}}
+@keyframes silwhee{0%{transform:translate(0,0) rotate(0)}30%{transform:translate(-50px,-60px) rotate(-30deg)}60%{transform:translate(60px,-150px) rotate(40deg)}100%{transform:translate(-20px,-420px) rotate(360deg);opacity:0}}
+@keyframes silpuff{0%{opacity:0;transform:translate(-50%,0) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--px,0px)),calc(120px + var(--py,0px))) scale(1.5)}}
+@keyframes sildrop{0%,49%{opacity:0;transform:translate(-50%,0) scale(.4)}52%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--px,170px)),150px) scale(1.4)}}
 .wdbig{font-size:1.35em;letter-spacing:.01em}
 /* phones: nothing may be wider than the screen */
 .wrap{grid-template-columns:minmax(0,1fr)}
@@ -287,7 +309,7 @@ window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:
 (function(){
 var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
 /* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
-var CV=29,APP_URL=location.origin+location.pathname;
+var CV=30,APP_URL=location.origin+location.pathname;
 var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
 var THEMES=[
   {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
@@ -390,12 +412,8 @@ function render(){if(state.cd){renderCounts();return}if(state.week){renderWeek()
     if(all)h+='<section class="card allone"><span>🏆</span><b>You did everything today!</b><div>'+th.bits.slice(0,5).join(' ')+'</div></section>';
     else if(cur){var total=Math.max(1,cur.e-cur.s),leftM=Math.max(0,cur.e-nm);
       h+='<section class="card now" style="--v:'+cur.v+'"><span class="badge">NOW</span><span class="bubble">'+cur.pic+'</span><span class="what">'+esc(cur.title)+'</span><span class="timebar"><i style="width:'+Math.round(leftM/total*100)+'%"></i></span>'+(cur.note?'<span class="left">'+esc(cur.note)+'</span>':'')+'<span class="left">'+dur(leftM)+' left</span><button class="donebtn" data-tick="'+esc(cur.b)+'" data-on="1">I did it! &#10004;</button></section>'}
-    else if(nxt){/* free time: a small card with a bar that shrinks as the next thing gets closer (the gap runs from when the last thing ended) */
-      var prevEnd=0;items.forEach(function(x){if(x.e<=nm&&x.e>prevEnd)prevEnd=x.e});if(!prevEnd||prevEnd>=nxt.s)prevEnd=Math.max(0,nxt.s-60);
-      var gap=Math.max(1,nxt.s-prevEnd),toGo=Math.max(0,nxt.s-nm);
-      h+='<section class="card freebar" style="--v:'+nxt.v+'"><div class="fb-row"><span class="bubble fb-b">🎈</span><span class="fb-t"><b>Free time</b><small>'+dur(toGo)+' until '+esc(nxt.title)+' at '+nice(nxt.start)+'</small></span><span class="bubble">'+nxt.pic+'</span></div>'
-        +'<span class="timebar" role="img" aria-label="'+dur(toGo)+' of free time left"><i style="width:'+Math.max(2,Math.min(100,Math.round(toGo/gap*100)))+'%"></i></span></section>'}
-    if(nxt&&!all&&cur)h+='<div class="card next"><span class="bubble" style="--v:'+nxt.v+'">'+nxt.pic+'</span><span><small>Next up at '+nice(nxt.start)+'</small><b>'+esc(nxt.title)+'</b></span></div>';
+    /* no tile for free time: when nothing is on right now the page just shows what is next */
+    if(nxt&&!all)h+='<div class="card next"><span class="bubble" style="--v:'+nxt.v+'">'+nxt.pic+'</span><span><small>Next up at '+nice(nxt.start)+'</small><b>'+esc(nxt.title)+'</b></span></div>';
   }
   h+='<div class="list">'+(items.length?items.map(function(x){var done=isDone(x),past=today&&x.e<=nm,c=today&&x.s<=nm&&nm<x.e&&!done;
     return '<div class="tile '+(c?'cur ':'')+(past&&!done?'past ':'')+(done?'done':'')+'"><span class="bubble" style="--v:'+x.v+'">'+x.pic+'</span><span><span class="t">'+esc(x.title)+'</span><span class="when">'+nice(x.start)+(x.end?' to '+nice(x.end):'')+(today&&x.s<=nm&&nm<x.e?' · '+dur(x.e-nm)+' left':'')+'</span>'
@@ -460,6 +478,33 @@ function fx(id){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion
   var old=document.querySelector('.fx');if(old&&old.parentNode)old.parentNode.removeChild(old);
   var el=document.createElement('div');el.className='fx';el.setAttribute('aria-hidden','true');el.innerHTML='<div class="fx-blob fxk-'+k+'">'+inner+'</div>';document.body.appendChild(el);
   setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},2100)}
+/* the silly button: each press plays the next daft noise (made here, no sound files) with a daft picture to match */
+function sctx(){var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;actx=actx||new AC();if(actx.state==='suspended'){try{actx.resume()}catch(e){}}return actx}
+function snoise(c,dur){var b=c.createBuffer(1,Math.floor(c.sampleRate*dur),c.sampleRate),d=b.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;var s=c.createBufferSource();s.buffer=b;return s}
+function senv(g,t,a,peak,hold,rel){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.setValueAtTime(peak,t+a+hold);g.gain.exponentialRampToValueAtTime(.0001,t+a+hold+rel)}
+var SILLY=[
+  {k:'fart',e:'😳',w:'PARP!',x:'<i class="sil-puff p1">💨</i><i class="sil-puff p2">💨</i><i class="sil-puff p3">💨</i>',s:function(c,t){
+    var o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),f=c.createBiquadFilter(),g=c.createGain();o.type='sawtooth';o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(52,t+.75);
+    l.frequency.setValueAtTime(34,t);l.frequency.linearRampToValueAtTime(19,t+.8);lg.gain.value=34;l.connect(lg);lg.connect(o.frequency);f.type='lowpass';f.frequency.value=480;f.Q.value=3;
+    senv(g,t,.03,.55,.5,.3);o.connect(f);f.connect(g);g.connect(c.destination);o.start(t);l.start(t);o.stop(t+.9);l.stop(t+.9)}},
+  {k:'burp',e:'😮',w:'BUUURP!',x:'<i class="sil-bub b1">🫧</i><i class="sil-bub b2">🫧</i>',s:function(c,t){
+    var o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),f=c.createBiquadFilter(),g=c.createGain();o.type='square';o.frequency.setValueAtTime(95,t);o.frequency.linearRampToValueAtTime(70,t+.25);o.frequency.linearRampToValueAtTime(110,t+.6);
+    l.frequency.value=42;lg.gain.value=22;l.connect(lg);lg.connect(o.frequency);f.type='bandpass';f.Q.value=4;f.frequency.setValueAtTime(350,t);f.frequency.linearRampToValueAtTime(950,t+.3);f.frequency.linearRampToValueAtTime(420,t+.65);
+    senv(g,t,.04,.7,.42,.2);o.connect(f);f.connect(g);g.connect(c.destination);o.start(t);l.start(t);o.stop(t+.75);l.stop(t+.75)}},
+  {k:'sneeze',e:'🤧',w:'AH… AH… CHOO!',x:'<i class="sil-drop d1">💦</i><i class="sil-drop d2">💦</i>',s:function(c,t){
+    [0,.34].forEach(function(dl){var n=snoise(c,.25),f=c.createBiquadFilter(),g=c.createGain();f.type='bandpass';f.frequency.setValueAtTime(700,t+dl);f.frequency.linearRampToValueAtTime(1300,t+dl+.2);f.Q.value=2;senv(g,t+dl,.08,.22,.06,.1);n.connect(f);f.connect(g);g.connect(c.destination);n.start(t+dl);n.stop(t+dl+.26)});
+    var n2=snoise(c,.6),f2=c.createBiquadFilter(),g2=c.createGain();f2.type='highpass';f2.frequency.setValueAtTime(3200,t+.72);f2.frequency.exponentialRampToValueAtTime(700,t+1.2);senv(g2,t+.72,.015,.8,.08,.4);n2.connect(f2);f2.connect(g2);g2.connect(c.destination);n2.start(t+.72);n2.stop(t+1.3);
+    var o=c.createOscillator(),g3=c.createGain();o.type='triangle';o.frequency.setValueAtTime(900,t+.72);o.frequency.exponentialRampToValueAtTime(260,t+1.05);senv(g3,t+.72,.02,.3,.05,.3);o.connect(g3);g3.connect(c.destination);o.start(t+.72);o.stop(t+1.15)}},
+  {k:'boing',e:'🐸',w:'BOING!',x:'',s:function(c,t){var o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(160,t);
+    [[.12,520],[.26,200],[.38,440],[.5,220],[.62,360],[.8,180]].forEach(function(p){o.frequency.exponentialRampToValueAtTime(p[1],t+p[0])});senv(g,t,.01,.5,.5,.35);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.9)}},
+  {k:'quack',e:'🦆',w:'QUACK QUACK!',x:'',s:function(c,t){[0,.3].forEach(function(dl){var o=c.createOscillator(),f=c.createBiquadFilter(),g=c.createGain();o.type='sawtooth';o.frequency.setValueAtTime(640,t+dl);o.frequency.exponentialRampToValueAtTime(380,t+dl+.18);
+    f.type='bandpass';f.frequency.value=1300;f.Q.value=6;senv(g,t+dl,.01,.7,.1,.09);o.connect(f);f.connect(g);g.connect(c.destination);o.start(t+dl);o.stop(t+dl+.22)})}},
+  {k:'whee',e:'🎈',w:'WHEEEEE!',x:'',s:function(c,t){var o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(300,t);o.frequency.exponentialRampToValueAtTime(1700,t+.7);o.frequency.exponentialRampToValueAtTime(240,t+1.15);senv(g,t,.03,.35,.8,.3);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+1.2)}}];
+function silly(){var i=(+store.get('silly')||0)%SILLY.length,it=SILLY[i];store.set('silly',i+1);
+  try{var c=sctx();if(c)it.s(c,c.currentTime+.03)}catch(e){}
+  var old=document.querySelector('.fx');if(old&&old.parentNode)old.parentNode.removeChild(old);
+  var el=document.createElement('div');el.className='fx sillyfx';el.setAttribute('role','status');el.innerHTML='<div class="sil-in"><div class="fx-blob"><span class="fx-emoji sil-'+it.k+'">'+it.e+'</span>'+it.x+'</div><b class="sil-word">'+it.w+'</b></div>';
+  document.body.appendChild(el);setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},2100)}
 /* the heart button: a message from Mum, with a heart flying round the world */
 var EARTH='<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="92" fill="#2d8cff" stroke="#0b2a6b" stroke-width="6"/><path d="M52 58q18-22 44-14 10 8-2 18-16 4-14 20-8 16-24 8-14-14-4-32zM118 96q22-10 40 6 8 22-8 40-20 12-30-8-10-22-2-38zM70 138q14-6 22 6 2 16-12 20-14-4-10-26z" fill="#37c871" stroke="#0b2a6b" stroke-width="4" stroke-linejoin="round"/><path d="M30 92q14-8 26 0M140 52q12-8 24 0" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".85"/><circle cx="80" cy="96" r="9" fill="#fff"/><circle cx="118" cy="92" r="9" fill="#fff"/><circle cx="82" cy="98" r="4.5" fill="#0b2a6b"/><circle cx="120" cy="94" r="4.5" fill="#0b2a6b"/><path d="M84 118q16 14 32-2" fill="none" stroke="#0b2a6b" stroke-width="5" stroke-linecap="round"/><circle cx="68" cy="112" r="7" fill="#ff8fb3" opacity=".8"/><circle cx="132" cy="108" r="7" fill="#ff8fb3" opacity=".8"/></svg>';
 /* The photo in the message is chosen on the tablet itself and kept only on that tablet (never uploaded anywhere). */
@@ -477,7 +522,7 @@ function love(){var old=document.querySelector('.love');if(old&&old.parentNode){
       try{localStorage.setItem('lovephoto',c.toDataURL('image/jpeg',.82))}catch(e){}URL.revokeObjectURL(url);shut();love()};
     img.onerror=function(){URL.revokeObjectURL(url)};img.src=url});
   document.body.appendChild(el);chime(true);el._t=setTimeout(shut,ph?12000:9000)}
-function loveBtn(){if(document.querySelector('.lovebtn'))return;var b=document.createElement('button');b.className='lovebtn';b.setAttribute('data-love','');b.setAttribute('aria-label','A message from Mummy');b.textContent='💗';document.body.appendChild(b)}
+function loveBtn(){if(document.querySelector('.lovebtn'))return;var sb=document.createElement('button');sb.className='sillybtn';sb.setAttribute('data-silly','');sb.setAttribute('aria-label','Make a silly noise');sb.textContent='🤪';document.body.appendChild(sb);var b=document.createElement('button');b.className='lovebtn';b.setAttribute('data-love','');b.setAttribute('aria-label','A message from Mummy');b.textContent='💗';document.body.appendChild(b)}
 /* every tick says "Good job" with his own name: on screen always, and out loud too when sounds are switched on (the bell button) */
 function goodJob(){var nm=(state.day&&state.day.name)||'',msg='Good job'+(nm?', '+nm:'')+'!';cheer(msg);
   if(!store.get('snd'))return;try{var sy=window.speechSynthesis;if(!sy||!window.SpeechSynthesisUtterance)return;sy.cancel();var u=new SpeechSynthesisUtterance('Good job'+(nm?' '+nm:'')+'!');u.lang='en-GB';u.rate=1;u.pitch=1.2;sy.speak(u)}catch(e){}}
@@ -506,6 +551,7 @@ function tick(id,on,x,y){var d=state.day;if(!d||!d.isToday)return;var i=d.done.i
   .setTick(KID,id,on)}
 
 document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var d=b.dataset;
+  if(d.silly!==undefined){silly();return}
   if(d.love!==undefined||d.loveclose!==undefined){love();return}
   if(d.pick){loveBtn();KID=d.pick;store.set('kid',KID);state.day=null;applyTheme();render();load();return}
   if(d.themes!==undefined){state.themes=!state.themes;render();return}
