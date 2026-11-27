@@ -213,6 +213,21 @@ button{font:inherit;color:inherit;cursor:pointer}
 @keyframes earthbob{0%,100%{transform:rotate(14deg) translateY(0)}50%{transform:rotate(18deg) translateY(-8px)}}
 @keyframes lovebeat{0%,100%{transform:scale(1)}15%{transform:scale(1.12)}30%{transform:scale(1)}45%{transform:scale(1.08)}}
 @keyframes lovein{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.seg{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+@media (max-width:560px){.seg{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+.cds{display:grid;gap:16px}
+.cdc{background:#fff;border-radius:30px;box-shadow:0 8px 0 rgba(0,0,0,.16);border:6px solid var(--c1);padding:16px 18px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px 16px}
+.cdc.tod{animation:pulse 1.6s ease-in-out infinite}
+.cdp{font-size:64px;line-height:1;animation:bob 2.4s ease-in-out infinite}
+.cdm b{display:block;font:700 28px/1.12 "Fredoka",sans-serif;overflow-wrap:anywhere}
+.cdm small{display:block;font:600 18px/1.2 "Fredoka",sans-serif;color:#5b5378;margin-top:2px}
+.cdn{display:grid;justify-items:center;min-width:104px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-radius:24px;padding:10px 12px}
+.cdn b{font:700 50px/1 "Fredoka",sans-serif}
+.cdn small{font:600 19px/1.1 "Fredoka",sans-serif}
+.cdw{grid-column:1/-1;font:600 19px/1.2 "Fredoka",sans-serif;color:#5b5378}
+.cdmoons{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:3px;font-size:22px;line-height:1}
+.cdmoons i{font-style:normal}
+@media (max-width:480px){.cdc{padding:12px;gap:8px 10px;border-radius:24px}.cdp{font-size:44px}.cdm b{font-size:21px}.cdm small{font-size:15px}.cdn{min-width:78px;border-radius:18px}.cdn b{font-size:36px}.cdn small{font-size:15px}.cdmoons{font-size:17px}.cdw{font-size:16px}}
 .wdbig{font-size:1.35em;letter-spacing:.01em}
 /* phones: nothing may be wider than the screen */
 .wrap{grid-template-columns:minmax(0,1fr)}
@@ -252,13 +267,14 @@ function call(p){var q=Object.keys(p).map(function(k){return encodeURIComponent(
 function runner(){var ok=function(){},fail=function(){};var api={withSuccessHandler:function(f){ok=f;return api},withFailureHandler:function(f){fail=f;return api},
   getDay:function(kid,tom){call({api:'day',kid:kid,tom:tom?1:0}).then(ok,fail)},
   getWeek:function(kid){call({api:'week',kid:kid}).then(ok,fail)},
+  getCounts:function(kid){call({api:'counts',kid:kid}).then(ok,fail)},
   setTick:function(kid,id,on){call({api:'tick',kid:kid,id:id,on:on?1:0}).then(ok,fail)}};return api}
 window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:runner})})();
 </script><script>
 (function(){
 var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
 /* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
-var CV=23,APP_URL=location.origin+location.pathname;
+var CV=24,APP_URL=location.origin+location.pathname;
 var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
 var THEMES=[
   {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
@@ -287,7 +303,7 @@ function nowMins(){try{var s=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/L
 var store={get:function(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
 var app=document.getElementById('app');
-var state={day:null,tomorrow:false,week:false,jar:false,wk:null,note:'',pending:{},themes:false,fresh:'',cheered:''};
+var state={day:null,tomorrow:false,week:false,jar:false,cd:false,cds:null,wk:null,note:'',pending:{},themes:false,fresh:'',cheered:''};
 if(!KID)KID=(store.get('kid')||'');
 function kidRec(){for(var i=0;i<KIDS.length;i++)if(KIDS[i].id===KID)return KIDS[i];return null}
 function themeId(){var t=store.get('theme-'+KID),k=kidRec();for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===t)return t;return k?k.theme:'space'}
@@ -301,7 +317,7 @@ function paint(date){var c=dayCol(date);document.body.style.setProperty('--bg1',
 function head(th,title,sub){var h='<div class="top"><span class="mascot">'+th.face+'</span><span class="hi"><b>'+title+'</b><small>'+esc(sub)+'</small></span>'
     +'<button class="round" data-snd aria-label="'+(store.get('snd')?'Turn sounds off':'Turn sounds on')+'">'+(store.get('snd')?'🔔':'🔕')+'</button><button class="round" data-themes aria-label="Change my character">🎨</button></div>';
   if(state.themes)h+='<div class="themes" role="group" aria-label="Pick your character">'+THEMES.map(function(t){return '<button data-theme="'+t.id+'" aria-pressed="'+(t.id===th.id)+'" style="background:'+THEME_BG[t.id]+'"><span>'+t.face+'</span>'+t.name+'</button>'}).join('')+'</div>';
-  return h+'<div class="seg" role="group" aria-label="Which day"><button data-view="today" aria-pressed="'+(!state.week&&!state.jar&&!state.tomorrow)+'">Today</button><button data-view="tom" aria-pressed="'+(!state.week&&!state.jar&&state.tomorrow)+'">Tomorrow</button><button data-view="week" aria-pressed="'+state.week+'">My week</button><button data-view="jar" aria-pressed="'+state.jar+'">My jar</button></div>'}
+  return h+'<div class="seg" role="group" aria-label="Which day"><button data-view="today" aria-pressed="'+(!state.week&&!state.jar&&!state.cd&&!state.tomorrow)+'">Today</button><button data-view="tom" aria-pressed="'+(!state.week&&!state.jar&&!state.cd&&state.tomorrow)+'">Tomorrow</button><button data-view="week" aria-pressed="'+state.week+'">My week</button><button data-view="jar" aria-pressed="'+state.jar+'">My jar</button><button data-view="cd" aria-pressed="'+state.cd+'">Countdown</button></div>'}
 function renderWeek(){var w=state.wk,th=theme();
   if(!w){app.innerHTML=head(th,'My week','')+'<p class="msg">'+esc(state.note||'Opening your week…')+'</p>';return}
   paint(w.today);
@@ -311,6 +327,20 @@ function renderWeek(){var w=state.wk,th=theme();
       +(dd.items.length?dd.items.map(function(x){return '<div class="wi"><span>'+pic(x)+'</span><small>'+nice(x.start)+'</small><b>'+esc(x.title)+'</b></div>'}).join(''):'<p class="wfree">A free day! 🎈</p>')+'</div></section>')}).join('')+'</div>';
   if(state.note)h+='<p class="note">'+esc(state.note)+'</p>';
   app.innerHTML=h}
+/* Countdown tab: the things Mum has put on the countdown in Casa Mallow, with how many sleeps are left */
+function renderCounts(){var c=state.cds,th=theme();
+  if(!c){app.innerHTML=head(th,'Countdown','')+'<p class="msg">'+esc(state.note||'Opening your countdowns…')+'</p>';return}
+  paint(c.today);var t0=new Date(c.today+'T12:00:00Z').getTime();
+  var h=head(th,'Countdown','How many sleeps to go');
+  h+=c.list.length?'<div class="cds">'+c.list.map(function(x,i){var dt=new Date(x.d+'T12:00:00Z'),n=Math.round((dt.getTime()-t0)/864e5),col=dayCol(x.d),when=dt.toLocaleDateString('en-GB',{timeZone:'UTC',weekday:'long',day:'numeric',month:'long'});
+      var moons='';if(n>=1&&n<=31){for(var k=0;k<n;k++)moons+='<i>🌙</i>'}
+      return '<section class="cdc'+(n<=0?' tod':'')+'" style="--c1:'+col[0]+';--c2:'+col[1]+'"><span class="cdp">'+esc(x.i||'⭐')+'</span><span class="cdm"><b>'+esc(x.t)+'</b><small>'+when+'</small></span>'
+        +'<span class="cdn">'+(n<=0?'<b>🎉</b><small>It’s today!</small>':n===1?'<b>1</b><small>sleep</small>':'<b>'+n+'</b><small>sleeps</small>')+'</span>'
+        +(n===1?'<span class="cdw">Tomorrow!</span>':n>=14?'<span class="cdw">That’s about '+Math.round(n/7)+' weeks</span>':'')+(moons?'<span class="cdmoons" aria-hidden="true">'+moons+'</span>':'')+'</section>'}).join('')+'</div>'
+    :'<p class="msg">Nothing to count down to just now. 🌟</p>';
+  if(state.note)h+='<p class="note">'+esc(state.note)+'</p>';
+  if(c.cv&&c.cv>CV&&true)h='<a class="upd" target="_top" href="'+esc(APP_URL)+'?kid='+esc(KID)+'&v='+d.cv+'">✨ New things are ready! Tap here ✨</a>'+h;
+  app.innerHTML=h}
 function greet(){var h=nowMins()/60;return h<12?'Good morning':h<17?'Good afternoon':h<20?'Good evening':'Nearly bedtime'}
 
 function pick(){document.body.className='t-candy';app.innerHTML='<div class="pick"><p class="msg">Whose tablet is this?</p>'+KIDS.map(function(k){var th=THEMES[0];for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===k.theme)th=THEMES[i];return '<button data-pick="'+k.id+'"><span>'+th.face+'</span>'+k.name+'</button>'}).join('')+'</div>'}
@@ -319,7 +349,7 @@ function shape(d){var list=d.items.map(function(x){return{id:x.id,b:x.b||('k_'+K
   return list.map(function(x,i){var s=mins(x.start),nx=null;for(var j=i+1;j<list.length;j++){if(mins(list[j].start)>s){nx=list[j];break}}
     var e=x.end?mins(x.end):nx?mins(nx.start):s+60;x.s=s;x.e=Math.max(e,s+5);x.pic=pic(x);x.v=VIVID[i%VIVID.length];return x})}
 
-function render(){if(state.week){renderWeek();return}
+function render(){if(state.cd){renderCounts();return}if(state.week){renderWeek();return}
   var d=state.day;if(!d){app.innerHTML='<p class="msg">'+esc(state.note||'Opening your day…')+'</p>';return}
   paint(d.date);
   var th=theme(),items=shape(d),nm=nowMins(),today=d.isToday,isDone=function(x){return d.done.indexOf(x.b)>=0};
@@ -434,6 +464,8 @@ function chime(big){if(!store.get('snd'))return;try{var AC=window.AudioContext||
     notes.forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t+i*.11);g.gain.exponentialRampToValueAtTime(.16,t+i*.11+.02);g.gain.exponentialRampToValueAtTime(0.0001,t+i*.11+.32);o.connect(g);g.connect(actx.destination);o.start(t+i*.11);o.stop(t+i*.11+.35)})}catch(e){}}
 
 function load(){if(!KID){pick();return}
+  if(state.cd){google.script.run.withSuccessHandler(function(c){state.cds=c;state.note='';if(state.cd)render()})
+    .withFailureHandler(function(){state.note=state.cds?'No internet just now. Showing what loaded last.':'Your countdowns could not load just now. Try again in a moment.';if(state.cd)render()}).getCounts(KID);return}
   if(state.week){google.script.run.withSuccessHandler(function(w){state.wk=w;state.note='';if(state.week)render()})
     .withFailureHandler(function(){state.note=state.wk?'No internet just now. Showing what loaded last.':'Your week could not load just now. Try again in a moment.';if(state.week)render()}).getWeek(KID);return}
   google.script.run.withSuccessHandler(function(d){
@@ -457,7 +489,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button');i
   if(d.themes!==undefined){state.themes=!state.themes;render();return}
   if(d.theme){store.set('theme-'+KID,d.theme);state.themes=false;applyTheme();render();party(window.innerWidth/2,window.innerHeight/3,18);return}
   if(d.snd!==undefined){store.set('snd',!store.get('snd'));render();chime(false);return}
-  if(d.view){var wasTom=state.tomorrow;state.week=d.view==='week';state.jar=d.view==='jar';state.tomorrow=d.view==='tom';if(!state.week&&(state.tomorrow!==wasTom||!state.day))state.day=null;state.note='';render();load();return}
+  if(d.view){var wasTom=state.tomorrow;state.week=d.view==='week';state.jar=d.view==='jar';state.cd=d.view==='cd';state.tomorrow=d.view==='tom';if(!state.week&&!state.cd&&(state.tomorrow!==wasTom||!state.day))state.day=null;state.note='';render();load();return}
   if(d.tick){var r=b.getBoundingClientRect();tick(d.tick,d.on==='1',r.left+r.width/2,r.top+r.height/2);return}});
 setInterval(function(){if(state.day)render()},30000);
 setInterval(function(){if(!document.hidden)load()},60000);
