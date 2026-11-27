@@ -213,7 +213,11 @@ button{font:inherit;color:inherit;cursor:pointer}
 @keyframes earthbob{0%,100%{transform:rotate(14deg) translateY(0)}50%{transform:rotate(18deg) translateY(-8px)}}
 @keyframes lovebeat{0%,100%{transform:scale(1)}15%{transform:scale(1.12)}30%{transform:scale(1)}45%{transform:scale(1.08)}}
 @keyframes lovein{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
-.seg{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.seg{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+.nextbig{border-style:dashed;opacity:.96}
+.nextbig .bubble{width:110px!important;height:110px!important;font-size:62px!important;animation:none!important}
+.nextbig .what{font-size:clamp(26px,6.5vw,40px)!important}
+.badge.nb{background:#231942;color:#fff}
 @media (max-width:560px){.seg{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 .cds{display:grid;gap:16px}
 .cdc{background:#fff;border-radius:30px;box-shadow:0 8px 0 rgba(0,0,0,.16);border:6px solid var(--c1);padding:16px 18px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px 16px}
@@ -309,7 +313,7 @@ window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:
 (function(){
 var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
 /* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
-var CV=30,APP_URL=location.origin+location.pathname;
+var CV=32,APP_URL=location.origin+location.pathname;
 var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
 var THEMES=[
   {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
@@ -338,7 +342,7 @@ function nowMins(){try{var s=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/L
 var store={get:function(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
 var app=document.getElementById('app');
-var state={day:null,tomorrow:false,week:false,jar:false,cd:false,cds:null,wk:null,note:'',pending:{},themes:false,fresh:'',cheered:''};
+var state={day:null,tomorrow:false,week:false,jar:false,nn:false,cd:false,cds:null,wk:null,note:'',pending:{},themes:false,fresh:'',cheered:''};
 if(!KID)KID=(store.get('kid')||'');
 function kidRec(){for(var i=0;i<KIDS.length;i++)if(KIDS[i].id===KID)return KIDS[i];return null}
 function themeId(){var t=store.get('theme-'+KID),k=kidRec();for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===t)return t;return k?k.theme:'space'}
@@ -352,7 +356,7 @@ function paint(date){var c=dayCol(date);document.body.style.setProperty('--bg1',
 function head(th,title,sub){var h='<div class="top"><span class="mascot">'+th.face+'</span><span class="hi"><b>'+title+'</b><small>'+esc(sub)+'</small></span>'
     +'<button class="round" data-snd aria-label="'+(store.get('snd')?'Turn sounds off':'Turn sounds on')+'">'+(store.get('snd')?'🔔':'🔕')+'</button><button class="round" data-themes aria-label="Change my character">🎨</button></div>';
   if(state.themes)h+='<div class="themes" role="group" aria-label="Pick your character">'+THEMES.map(function(t){return '<button data-theme="'+t.id+'" aria-pressed="'+(t.id===th.id)+'" style="background:'+THEME_BG[t.id]+'"><span>'+t.face+'</span>'+t.name+'</button>'}).join('')+'</div>';
-  return h+'<div class="seg" role="group" aria-label="Which day"><button data-view="today" aria-pressed="'+(!state.week&&!state.jar&&!state.cd&&!state.tomorrow)+'">Today</button><button data-view="tom" aria-pressed="'+(!state.week&&!state.jar&&!state.cd&&state.tomorrow)+'">Tomorrow</button><button data-view="week" aria-pressed="'+state.week+'">My week</button><button data-view="jar" aria-pressed="'+state.jar+'">My jar</button><button data-view="cd" aria-pressed="'+state.cd+'">Countdown</button></div>'}
+  return h+'<div class="seg" role="group" aria-label="Which day"><button data-view="nn" aria-pressed="'+state.nn+'">Now &amp; next</button><button data-view="today" aria-pressed="'+(!state.week&&!state.jar&&!state.cd&&!state.nn&&!state.tomorrow)+'">Today</button><button data-view="tom" aria-pressed="'+(!state.week&&!state.jar&&!state.cd&&!state.nn&&state.tomorrow)+'">Tomorrow</button><button data-view="week" aria-pressed="'+state.week+'">My week</button><button data-view="jar" aria-pressed="'+state.jar+'">My jar</button><button data-view="cd" aria-pressed="'+state.cd+'">Countdown</button></div>'}
 function renderWeek(){var w=state.wk,th=theme();
   if(!w){app.innerHTML=head(th,'My week','')+'<p class="msg">'+esc(state.note||'Opening your week…')+'</p>';return}
   paint(w.today);
@@ -397,6 +401,21 @@ function render(){if(state.cd){renderCounts();return}if(state.week){renderWeek()
     if(state.note)jh+='<p class="note">'+esc(state.note)+'</p>';
     if(d.cv&&d.cv>CV&&true)jh='<a class="upd" target="_top" href="'+esc(APP_URL)+'?kid='+esc(KID)+'&v='+d.cv+'">✨ New things are ready! Tap here ✨</a>'+jh;
     app.innerHTML=jh;state.fresh='';return}
+  /* Now & next tab: just the thing to do now and the thing after it, nothing else */
+  if(state.nn){var nh=head(th,'Now &amp; next',dayName);
+    if(!today)nh+='<p class="msg">Opening…</p>';
+    else if(all)nh+='<section class="card allone"><span>🏆</span><b>You did everything today!</b><div>'+th.bits.slice(0,5).join(' ')+'</div></section>';
+    else{
+      if(cur){var ntot=Math.max(1,cur.e-cur.s),nleft=Math.max(0,cur.e-nm);
+        nh+='<section class="card now" style="--v:'+cur.v+'"><span class="badge">NOW</span><span class="bubble">'+cur.pic+'</span><span class="what">'+esc(cur.title)+'</span><span class="timebar"><i style="width:'+Math.round(nleft/ntot*100)+'%"></i></span>'+(cur.note?'<span class="left">'+esc(cur.note)+'</span>':'')+'<span class="left">'+dur(nleft)+' left</span><button class="donebtn" data-tick="'+esc(cur.b)+'" data-on="1">I did it! &#10004;</button></section>'}
+      if(nxt){var gapm=Math.max(0,nxt.s-nm);
+        nh+='<section class="card now nextbig" style="--v:'+nxt.v+'"><span class="badge nb">NEXT</span><span class="bubble">'+nxt.pic+'</span><span class="what">'+esc(nxt.title)+'</span><span class="left">at '+nice(nxt.start)+(gapm>0?' · in '+dur(gapm):'')+'</span></section>'}
+      if(!cur&&!nxt)nh+='<p class="msg">Nothing else today. 🌙</p>'}
+    if(state.note)nh+='<p class="note">'+esc(state.note)+'</p>';
+    if(d.cv&&d.cv>CV&&true)nh='<a class="upd" target="_top" href="'+esc(APP_URL)+'?kid='+esc(KID)+'&v='+d.cv+'">✨ New things are ready! Tap here ✨</a>'+nh;
+    app.innerHTML=nh;state.fresh='';
+    var wasN=state.prev;state.prev={date:d.date,all:all};if(all&&wasN&&wasN.date===d.date&&!wasN.all){party(window.innerWidth/2,window.innerHeight/3,46);cheer('All done! 🏆');chime(true)}
+    return}
   /* the top says the day of the week, big, so they always know what day it is */
   var dObj=new Date(d.date+'T12:00:00Z'),wdName=dObj.toLocaleDateString('en-GB',{timeZone:'UTC',weekday:'long'}),dNum=dObj.toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'long'});
   var h=head(th,'<span class="wdbig">'+esc(wdName)+'</span>',(today?'Today':'Tomorrow')+' · '+dNum);
@@ -410,10 +429,7 @@ function render(){if(state.cd){renderCounts();return}if(state.week){renderWeek()
       +'<div class="dl-track"><i style="width:'+p.toFixed(1)+'%"></i><b style="left:'+p.toFixed(1)+'%">'+th.face+'</b></div>'
       +'<div class="dl-ends"><span>🌅 '+nice(items[0].start)+'</span><span class="dl-now">'+esc(where)+'</span><span>'+nice(last.start)+' 🌙</span></div></div>';
     if(all)h+='<section class="card allone"><span>🏆</span><b>You did everything today!</b><div>'+th.bits.slice(0,5).join(' ')+'</div></section>';
-    else if(cur){var total=Math.max(1,cur.e-cur.s),leftM=Math.max(0,cur.e-nm);
-      h+='<section class="card now" style="--v:'+cur.v+'"><span class="badge">NOW</span><span class="bubble">'+cur.pic+'</span><span class="what">'+esc(cur.title)+'</span><span class="timebar"><i style="width:'+Math.round(leftM/total*100)+'%"></i></span>'+(cur.note?'<span class="left">'+esc(cur.note)+'</span>':'')+'<span class="left">'+dur(leftM)+' left</span><button class="donebtn" data-tick="'+esc(cur.b)+'" data-on="1">I did it! &#10004;</button></section>'}
-    /* no tile for free time: when nothing is on right now the page just shows what is next */
-    if(nxt&&!all)h+='<div class="card next"><span class="bubble" style="--v:'+nxt.v+'">'+nxt.pic+'</span><span><small>Next up at '+nice(nxt.start)+'</small><b>'+esc(nxt.title)+'</b></span></div>';
+    /* the NOW and NEXT cards live on their own "Now & next" tab, so this page is only the day's routine */
   }
   h+='<div class="list">'+(items.length?items.map(function(x){var done=isDone(x),past=today&&x.e<=nm,c=today&&x.s<=nm&&nm<x.e&&!done;
     return '<div class="tile '+(c?'cur ':'')+(past&&!done?'past ':'')+(done?'done':'')+'"><span class="bubble" style="--v:'+x.v+'">'+x.pic+'</span><span><span class="t">'+esc(x.title)+'</span><span class="when">'+nice(x.start)+(x.end?' to '+nice(x.end):'')+(today&&x.s<=nm&&nm<x.e?' · '+dur(x.e-nm)+' left':'')+'</span>'
@@ -523,9 +539,8 @@ function love(){var old=document.querySelector('.love');if(old&&old.parentNode){
     img.onerror=function(){URL.revokeObjectURL(url)};img.src=url});
   document.body.appendChild(el);chime(true);el._t=setTimeout(shut,ph?12000:9000)}
 function loveBtn(){if(document.querySelector('.lovebtn'))return;var sb=document.createElement('button');sb.className='sillybtn';sb.setAttribute('data-silly','');sb.setAttribute('aria-label','Make a silly noise');sb.textContent='🤪';document.body.appendChild(sb);var b=document.createElement('button');b.className='lovebtn';b.setAttribute('data-love','');b.setAttribute('aria-label','A message from Mummy');b.textContent='💗';document.body.appendChild(b)}
-/* every tick says "Good job" with his own name: on screen always, and out loud too when sounds are switched on (the bell button) */
-function goodJob(){var nm=(state.day&&state.day.name)||'',msg='Good job'+(nm?', '+nm:'')+'!';cheer(msg);
-  if(!store.get('snd'))return;try{var sy=window.speechSynthesis;if(!sy||!window.SpeechSynthesisUtterance)return;sy.cancel();var u=new SpeechSynthesisUtterance('Good job'+(nm?' '+nm:'')+'!');u.lang='en-GB';u.rate=1;u.pitch=1.2;sy.speak(u)}catch(e){}}
+/* every tick says "Good job" with his own name, on screen. No spoken voice for now: Mum will record her own to add later. */
+function goodJob(){var nm=(state.day&&state.day.name)||'';cheer('Good job'+(nm?', '+nm:'')+'!')}
 var actx=null;
 function chime(big){if(!store.get('snd'))return;try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;actx=actx||new AC();var notes=big?[523,659,784,1047]:[659,988],t=actx.currentTime;
     notes.forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t+i*.11);g.gain.exponentialRampToValueAtTime(.16,t+i*.11+.02);g.gain.exponentialRampToValueAtTime(0.0001,t+i*.11+.32);o.connect(g);g.connect(actx.destination);o.start(t+i*.11);o.stop(t+i*.11+.35)})}catch(e){}}
@@ -557,7 +572,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button');i
   if(d.themes!==undefined){state.themes=!state.themes;render();return}
   if(d.theme){store.set('theme-'+KID,d.theme);state.themes=false;applyTheme();render();party(window.innerWidth/2,window.innerHeight/3,18);return}
   if(d.snd!==undefined){store.set('snd',!store.get('snd'));render();chime(false);return}
-  if(d.view){var wasTom=state.tomorrow;state.week=d.view==='week';state.jar=d.view==='jar';state.cd=d.view==='cd';state.tomorrow=d.view==='tom';if(!state.week&&!state.cd&&(state.tomorrow!==wasTom||!state.day))state.day=null;state.note='';render();load();return}
+  if(d.view){var wasTom=state.tomorrow;state.week=d.view==='week';state.jar=d.view==='jar';state.nn=d.view==='nn';state.cd=d.view==='cd';state.tomorrow=d.view==='tom';if(!state.week&&!state.cd&&(state.tomorrow!==wasTom||!state.day))state.day=null;state.note='';render();load();return}
   if(d.tick){var r=b.getBoundingClientRect();tick(d.tick,d.on==='1',r.left+r.width/2,r.top+r.height/2);return}});
 setInterval(function(){if(state.day)render()},30000);
 setInterval(function(){if(!document.hidden)load()},60000);
