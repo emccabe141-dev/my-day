@@ -228,6 +228,15 @@ button{font:inherit;color:inherit;cursor:pointer}
 .cdmoons{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:3px;font-size:22px;line-height:1}
 .cdmoons i{font-style:normal}
 @media (max-width:480px){.cdc{padding:12px;gap:8px 10px;border-radius:24px}.cdp{font-size:44px}.cdm b{font-size:21px}.cdm small{font-size:15px}.cdn{min-width:78px;border-radius:18px}.cdn b{font-size:36px}.cdn small{font-size:15px}.cdmoons{font-size:17px}.cdw{font-size:16px}}
+.freebar{padding:12px 16px 14px;display:grid;gap:10px}
+.fb-row{display:flex;align-items:center;gap:12px}
+.freebar .bubble{width:54px;height:54px;font-size:30px}
+.freebar .fb-b{background:#ffe9a8}
+.fb-t{flex:1;min-width:0}
+.fb-t b{display:block;font:700 23px/1.1 "Fredoka",sans-serif}
+.fb-t small{display:block;font:600 18px/1.2 "Fredoka",sans-serif;color:#5b5378;overflow-wrap:anywhere}
+.freebar .timebar{max-width:none;height:16px}
+@media (max-width:480px){.freebar .bubble{width:44px;height:44px;font-size:24px}.fb-t b{font-size:20px}.fb-t small{font-size:16px}}
 .wdbig{font-size:1.35em;letter-spacing:.01em}
 /* phones: nothing may be wider than the screen */
 .wrap{grid-template-columns:minmax(0,1fr)}
@@ -274,7 +283,7 @@ window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:
 (function(){
 var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
 /* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
-var CV=24,APP_URL=location.origin+location.pathname;
+var CV=25,APP_URL=location.origin+location.pathname;
 var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
 var THEMES=[
   {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
@@ -377,8 +386,12 @@ function render(){if(state.cd){renderCounts();return}if(state.week){renderWeek()
     if(all)h+='<section class="card allone"><span>🏆</span><b>You did everything today!</b><div>'+th.bits.slice(0,5).join(' ')+'</div></section>';
     else if(cur){var total=Math.max(1,cur.e-cur.s),leftM=Math.max(0,cur.e-nm);
       h+='<section class="card now" style="--v:'+cur.v+'"><span class="badge">NOW</span><span class="bubble">'+cur.pic+'</span><span class="what">'+esc(cur.title)+'</span><span class="timebar"><i style="width:'+Math.round(leftM/total*100)+'%"></i></span>'+(cur.note?'<span class="left">'+esc(cur.note)+'</span>':'')+'<span class="left">'+dur(leftM)+' left</span><button class="donebtn" data-tick="'+esc(cur.b)+'" data-on="1">I did it! ⭐</button></section>'}
-    else if(nxt)h+='<section class="card now free"><span class="bubble">🎈</span><span class="what">Free time!</span></section>';
-    if(nxt&&!all)h+='<div class="card next"><span class="bubble" style="--v:'+nxt.v+'">'+nxt.pic+'</span><span><small>Next up at '+nice(nxt.start)+'</small><b>'+esc(nxt.title)+'</b></span></div>';
+    else if(nxt){/* free time: a small card with a bar that shrinks as the next thing gets closer (the gap runs from when the last thing ended) */
+      var prevEnd=0;items.forEach(function(x){if(x.e<=nm&&x.e>prevEnd)prevEnd=x.e});if(!prevEnd||prevEnd>=nxt.s)prevEnd=Math.max(0,nxt.s-60);
+      var gap=Math.max(1,nxt.s-prevEnd),toGo=Math.max(0,nxt.s-nm);
+      h+='<section class="card freebar" style="--v:'+nxt.v+'"><div class="fb-row"><span class="bubble fb-b">🎈</span><span class="fb-t"><b>Free time</b><small>'+dur(toGo)+' until '+esc(nxt.title)+' at '+nice(nxt.start)+'</small></span><span class="bubble">'+nxt.pic+'</span></div>'
+        +'<span class="timebar" role="img" aria-label="'+dur(toGo)+' of free time left"><i style="width:'+Math.max(2,Math.min(100,Math.round(toGo/gap*100)))+'%"></i></span></section>'}
+    if(nxt&&!all&&cur)h+='<div class="card next"><span class="bubble" style="--v:'+nxt.v+'">'+nxt.pic+'</span><span><small>Next up at '+nice(nxt.start)+'</small><b>'+esc(nxt.title)+'</b></span></div>';
   }
   h+='<div class="list">'+(items.length?items.map(function(x){var done=isDone(x),past=today&&x.e<=nm,c=today&&x.s<=nm&&nm<x.e&&!done;
     return '<div class="tile '+(c?'cur ':'')+(past&&!done?'past ':'')+(done?'done':'')+'"><span class="bubble" style="--v:'+x.v+'">'+x.pic+'</span><span><span class="t">'+esc(x.title)+'</span><span class="when">'+nice(x.start)+(x.end?' to '+nice(x.end):'')+'</span></span>'
