@@ -225,7 +225,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .cdn b{font:700 50px/1 "Fredoka",sans-serif}
 .cdn small{font:600 19px/1.1 "Fredoka",sans-serif}
 .cdw{grid-column:1/-1;font:600 19px/1.2 "Fredoka",sans-serif;color:#5b5378}
-.cdmoons{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:3px;font-size:22px;line-height:1}
+/* the moons sit on a dark night-sky strip so they stand out */
+.cdmoons{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;font-size:24px;line-height:1;background:linear-gradient(135deg,#1b1448,#3a2f8f);border-radius:18px;padding:10px 12px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.12)}
 .cdmoons i{font-style:normal}
 @media (max-width:480px){.cdc{padding:12px;gap:8px 10px;border-radius:24px}.cdp{font-size:44px}.cdm b{font-size:21px}.cdm small{font-size:15px}.cdn{min-width:78px;border-radius:18px}.cdn b{font-size:36px}.cdn small{font-size:15px}.cdmoons{font-size:17px}.cdw{font-size:16px}}
 .tbar{display:block;height:11px;border-radius:999px;background:rgba(35,25,66,.13);overflow:hidden;margin-top:7px;max-width:340px}
@@ -285,7 +286,7 @@ window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:
 (function(){
 var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
 /* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
-var CV=27,APP_URL=location.origin+location.pathname;
+var CV=28,APP_URL=location.origin+location.pathname;
 var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
 var THEMES=[
   {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
