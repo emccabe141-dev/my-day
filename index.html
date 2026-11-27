@@ -267,6 +267,13 @@ button{font:inherit;color:inherit;cursor:pointer}
 @keyframes silwhee{0%{transform:translate(0,0) rotate(0)}30%{transform:translate(-50px,-60px) rotate(-30deg)}60%{transform:translate(60px,-150px) rotate(40deg)}100%{transform:translate(-20px,-420px) rotate(360deg);opacity:0}}
 @keyframes silpuff{0%{opacity:0;transform:translate(-50%,0) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--px,0px)),calc(120px + var(--py,0px))) scale(1.5)}}
 @keyframes sildrop{0%,49%{opacity:0;transform:translate(-50%,0) scale(.4)}52%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--px,170px)),150px) scale(1.4)}}
+.ptimer{display:grid;justify-items:center;gap:6px}
+.ptimer svg{width:min(42vw,170px);height:min(42vw,170px);filter:drop-shadow(0 5px 0 rgba(0,0,0,.12))}
+.ptimer b{font:700 clamp(22px,5.6vw,30px)/1.1 "Fredoka",sans-serif;color:#231942}
+.pdots{display:flex;align-items:center;gap:5px}
+.pdots i{width:18px;height:18px;border-radius:50%;border:2px solid #231942;display:block}
+.pdots small{font:600 16px/1 "Fredoka",sans-serif;color:#5b5378;margin-left:4px}
+.nextbig .ptimer svg{width:min(32vw,120px);height:min(32vw,120px)}
 .wdbig{font-size:1.35em;letter-spacing:.01em}
 /* phones: nothing may be wider than the screen */
 .wrap{grid-template-columns:minmax(0,1fr)}
@@ -313,7 +320,7 @@ window.google={script:{}};Object.defineProperty(window.google.script,'run',{get:
 (function(){
 var KID=(new URLSearchParams(location.search).get('kid')||'').toLowerCase();if(KID!=='k1'&&KID!=='k2')KID='';
 /* CV must match CLIENT_V in Code.gs. If the server says a newer page exists, show a button to load it (a tap is needed: the page can't reload itself). */
-var CV=32,APP_URL=location.origin+location.pathname;
+var CV=33,APP_URL=location.origin+location.pathname;
 var KIDS=[{id:'k1',name:'',theme:'bear'},{id:'k2',name:'',theme:'ball'}];
 var THEMES=[
   {id:'bear',name:'Paddington',face:'🐻',bits:['🐻','🍊','🥪','🧳','🎩','☂️','🍯']},
@@ -380,6 +387,14 @@ function renderCounts(){var c=state.cds,th=theme();
   if(state.note)h+='<p class="note">'+esc(state.note)+'</p>';
   if(c.cv&&c.cv>CV&&true)h='<a class="upd" target="_top" href="'+esc(APP_URL)+'?kid='+esc(KID)+'&v='+d.cv+'">✨ New things are ready! Tap here ✨</a>'+h;
   app.innerHTML=h}
+/* A clock-face timer, like a kitchen timer: the coloured slice is the minutes left out of one hour and shrinks as time passes.
+   More than an hour shows a full face plus a small full dot for each extra hour. */
+function ptimer(m,col,label){m=Math.max(0,Math.round(m));var hrs=Math.floor(m/60),part=m>=60?(m%60===0?60:m%60):m,C=2*Math.PI*23,ticks='';
+  for(var i=0;i<12;i++){var a=i*Math.PI/6;ticks+='<line x1="'+(50+Math.sin(a)*42).toFixed(1)+'" y1="'+(50-Math.cos(a)*42).toFixed(1)+'" x2="'+(50+Math.sin(a)*(i%3?45:47)).toFixed(1)+'" y2="'+(50-Math.cos(a)*(i%3?45:47)).toFixed(1)+'" stroke="#231942" stroke-width="'+(i%3?1.5:2.6)+'" stroke-linecap="round"/>'}
+  var full=m>=60&&m%60===0?hrs-1:hrs,dots='';for(var k=0;k<Math.min(full,6);k++)dots+='<i style="background:'+col+'"></i>';
+  return '<span class="ptimer" role="img" aria-label="'+esc(label)+'"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#fff" stroke="#231942" stroke-width="3"/>'
+    +'<circle cx="50" cy="50" r="23" fill="none" stroke="'+col+'" stroke-width="46" stroke-dasharray="'+(part/60*C).toFixed(2)+' '+C.toFixed(2)+'" transform="rotate(-90 50 50)" style="transition:stroke-dasharray 1s linear"/>'
+    +ticks+'<circle cx="50" cy="50" r="4" fill="#231942"/></svg>'+(dots?'<span class="pdots" aria-hidden="true">'+dots+'<small>+'+full+' hr</small></span>':'')+'<b>'+esc(label)+'</b></span>'}
 function greet(){var h=nowMins()/60;return h<12?'Good morning':h<17?'Good afternoon':h<20?'Good evening':'Nearly bedtime'}
 
 function pick(){document.body.className='t-candy';app.innerHTML='<div class="pick"><p class="msg">Whose tablet is this?</p>'+KIDS.map(function(k){var th=THEMES[0];for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===k.theme)th=THEMES[i];return '<button data-pick="'+k.id+'"><span>'+th.face+'</span>'+k.name+'</button>'}).join('')+'</div>'}
@@ -407,9 +422,9 @@ function render(){if(state.cd){renderCounts();return}if(state.week){renderWeek()
     else if(all)nh+='<section class="card allone"><span>🏆</span><b>You did everything today!</b><div>'+th.bits.slice(0,5).join(' ')+'</div></section>';
     else{
       if(cur){var ntot=Math.max(1,cur.e-cur.s),nleft=Math.max(0,cur.e-nm);
-        nh+='<section class="card now" style="--v:'+cur.v+'"><span class="badge">NOW</span><span class="bubble">'+cur.pic+'</span><span class="what">'+esc(cur.title)+'</span><span class="timebar"><i style="width:'+Math.round(nleft/ntot*100)+'%"></i></span>'+(cur.note?'<span class="left">'+esc(cur.note)+'</span>':'')+'<span class="left">'+dur(nleft)+' left</span><button class="donebtn" data-tick="'+esc(cur.b)+'" data-on="1">I did it! &#10004;</button></section>'}
+        nh+='<section class="card now" style="--v:'+cur.v+'"><span class="badge">NOW</span><span class="bubble">'+cur.pic+'</span><span class="what">'+esc(cur.title)+'</span>'+ptimer(nleft,cur.v,dur(nleft)+' left')+(cur.note?'<span class="left">'+esc(cur.note)+'</span>':'')+'<button class="donebtn" data-tick="'+esc(cur.b)+'" data-on="1">I did it! &#10004;</button></section>'}
       if(nxt){var gapm=Math.max(0,nxt.s-nm);
-        nh+='<section class="card now nextbig" style="--v:'+nxt.v+'"><span class="badge nb">NEXT</span><span class="bubble">'+nxt.pic+'</span><span class="what">'+esc(nxt.title)+'</span><span class="left">at '+nice(nxt.start)+(gapm>0?' · in '+dur(gapm):'')+'</span></section>'}
+        nh+='<section class="card now nextbig" style="--v:'+nxt.v+'"><span class="badge nb">NEXT</span><span class="bubble">'+nxt.pic+'</span><span class="what">'+esc(nxt.title)+'</span>'+ptimer(gapm,nxt.v,gapm>0?'starts in '+dur(gapm):'starting now')+'<span class="left">at '+nice(nxt.start)+'</span></section>'}
       if(!cur&&!nxt)nh+='<p class="msg">Nothing else today. 🌙</p>'}
     if(state.note)nh+='<p class="note">'+esc(state.note)+'</p>';
     if(d.cv&&d.cv>CV&&true)nh='<a class="upd" target="_top" href="'+esc(APP_URL)+'?kid='+esc(KID)+'&v='+d.cv+'">✨ New things are ready! Tap here ✨</a>'+nh;
